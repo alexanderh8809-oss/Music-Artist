@@ -28,7 +28,7 @@
   const F = (window.SITE || {}).featured || {};
   const vid = (String(F.video || "").match(/video\/(\d+)/) || [])[1];
   const played = $(".played");
-  if (!vid) { played.hidden = true; $(".stage__proof").hidden = true; }
+  if (!vid) { played.hidden = true; $(".stage__proof").hidden = true; $(".mini").hidden = true; }
   else {
     document.querySelectorAll("[data-stat]").forEach((el) => { el.textContent = F[el.dataset.stat] || "–"; });
     $(".played__title").textContent = F.title || "";
@@ -36,13 +36,39 @@
     $(".played__watch").href = F.video;
     const poster = $(".phone__poster");
     if (F.poster) poster.src = F.poster; else poster.remove();
-    $(".phone__play").addEventListener("click", (e) => {
+    const player = () => {
       const f = document.createElement("iframe");
       f.src = `https://www.tiktok.com/player/v1/${vid}?autoplay=1&rel=0&description=0&music_info=0`;
       f.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
       f.title = F.title ? `${F.title} on TikTok` : "TikTok video";
-      e.currentTarget.replaceWith(f);
+      return f;
+    };
+    $(".phone__play").addEventListener("click", (e) => {
+      e.currentTarget.replaceWith(player());
       window.XH.track("tiktok_play", vid);
+    });
+
+    // the small card on the side of the opening plays it big, in a pop-up phone
+    const mini = $(".mini");
+    if (F.poster) $(".mini__poster").src = F.poster; else $(".mini__poster").remove();
+    let sheet = null;
+    mini.addEventListener("click", () => {
+      if (!sheet) {
+        sheet = document.createElement("dialog");
+        sheet.className = "watch";
+        sheet.setAttribute("aria-label", F.title ? `${F.title} on TikTok` : "TikTok video");
+        sheet.innerHTML = `<button class="watch__close" type="button" aria-label="Close">&times;</button>
+          <div class="phone watch__phone"></div>
+          <a class="arrow-link watch__link" href="${esc(F.video)}" target="_blank" rel="noopener" data-track="tiktok_video">Open in TikTok <span aria-hidden="true">&nearr;</span></a>`;
+        document.body.appendChild(sheet);
+        const close = () => sheet.close();
+        $(".watch__close", sheet).addEventListener("click", close);
+        sheet.addEventListener("click", (e) => { if (e.target === sheet) close(); });
+        sheet.addEventListener("close", () => { $(".watch__phone", sheet).innerHTML = ""; }); // stops the sound
+      }
+      $(".watch__phone", sheet).appendChild(player());
+      sheet.showModal();
+      window.XH.track("tiktok_play", vid + " (side)");
     });
   }
 

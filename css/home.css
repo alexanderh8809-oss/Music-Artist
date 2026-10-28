@@ -216,3 +216,31 @@
 .played__stats dd { margin: 4px 0 0; font-family: var(--f-head); font-size: 30px; line-height: 1; }
 .played__actions { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
 .played__watch { color: var(--bone); }
+
+/* the small TikTok on the side of the opening */
+.mini { left: calc(var(--gutter) + 56px); top: calc(var(--header-h) + 64px); width: 108px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer;
+  rotate: -4deg; opacity: calc(1 - var(--p) * 2.4); transition: rotate .3s var(--ease); }
+.mini:hover { rotate: 0deg; }
+.mini__screen { position: relative; display: grid; place-items: center; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #000;
+  box-shadow: inset 0 0 0 2px #2b2d33, 0 0 0 4px #050506, 0 14px 30px rgba(0,0,0,.6), 0 0 40px rgba(255,45,85,.15); }
+.mini__poster { width: 100%; height: auto; }
+.mini__play { position: absolute; inset: 0; margin: auto; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; padding-left: 3px; font-size: 14px;
+  background: rgba(242,236,226,.92); color: var(--ink); animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.12); } }
+.mini__label { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: 12px; color: var(--bone-dim); }
+.mini__label b { color: var(--bone); }
+@media (max-width: 960px) {
+  .mini { left: 10px; top: calc(30svh + 8px); width: 70px; z-index: 2; }
+  .mini__screen { border-radius: 11px; }
+  .mini__play { width: 28px; height: 28px; font-size: 11px; }
+  .mini__label { font-size: 11px; margin-top: 6px; text-shadow: 0 1px 6px #000; white-space: nowrap; }
+  .mini__on { display: none; }
+}
+
+/* the pop-up player */
+.watch { border: 0; padding: 0; background: none; overflow: visible; max-width: none; max-height: none; }
+.watch::backdrop { background: rgba(5,5,6,.86); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.watch__phone { width: auto; height: min(78svh, 680px); rotate: 0deg; }
+.watch__close { position: absolute; top: -52px; right: -6px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(242,236,226,.3); background: none; color: var(--bone); font-size: 26px; }
+.watch__link { display: flex; width: fit-content; margin: 16px auto 0; color: var(--bone); }
+@media (prefers-reduced-motion: reduce) { .mini__play { animation: none; } }
