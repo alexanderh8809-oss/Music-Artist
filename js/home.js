@@ -99,3 +99,13 @@
     })
   );
 })();
+
+/* Bio: fade the sentences in when it scrolls into view */
+(function () {
+  const bio = document.querySelector(".reveal");
+  if (!bio || !("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  bio.classList.add("reveal--armed");
+  new IntersectionObserver((entries, io) => {
+    if (entries[0].isIntersecting) { bio.classList.add("in"); io.disconnect(); }
+  }, { threshold: 0.35 }).observe(bio);
+})();

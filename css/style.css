@@ -87,6 +87,11 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 400; line-height: 1.05; ma
 }
 .site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--bone); }
 @media (max-width: 520px) { .site-nav .hide-sm { display: none; } }
+@media (max-width: 420px) {
+  .wordmark { font-size: 19px; }
+  .site-nav { gap: 14px; }
+  .site-nav a { font-size: 13px; letter-spacing: .12em; }
+}
 
 /* ---------- Buttons ---------- */
 .btn {
