@@ -19,6 +19,7 @@
   }
   const saveDraft = () => { try { localStorage.setItem(DRAFT, JSON.stringify({ board, stages })); } catch {} };
 
+  const bgsEl = $(".bgs");
   const cam = $(".cam"), boardEl = $(".board"), world = $(".world"), track = $(".track");
   const counter = $(".ctl__count"), prevBtn = $(".ctl--prev"), nextBtn = $(".ctl--next");
   const pad = (n) => String(n).padStart(2, "0");
@@ -32,29 +33,111 @@
     return tag === "p" ? `<p class="${cls} empty-box">${ph}</p>` : `<${tag} class="${cls}"><span class="empty-box">${ph}</span></${tag}>`;
   }
 
-  // Paper scraps drawn in CSS, used until real scrap images are uploaded
+  // Torn paper edges: a ragged clip-path, the same every visit for the same piece
+  function rng(seed) {
+    return () => {
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function tear(seed, edges, amp = 1.6) {
+    const r = rng(seed * 7919 + 17), pts = [];
+    const side = (e, n, at) => {
+      let d = amp / 2;
+      for (let k = 0; k < n; k++) {
+        if (!edges.includes(e)) { pts.push(at(k / n, -6)); continue; }
+        d = Math.max(0, Math.min(amp * 1.6, d * 0.45 + r() * amp * (r() < 0.12 ? 2.4 : 1)));
+        pts.push(at(k / n, d));
+      }
+    };
+    side("t", 26, (s, d) => [s * 100, d]);
+    side("r", 34, (s, d) => [100 - d, s * 100]);
+    side("b", 26, (s, d) => [100 - s * 100, 100 - d]);
+    side("l", 34, (s, d) => [d, 100 - s * 100]);
+    return `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}% ${y.toFixed(1)}%`).join(",")})`;
+  }
+  // the outline plus a coffee ring in a different spot on some pieces
+  const paper = (seed, edges, amp) => {
+    const r = rng(seed * 31 + 5);
+    const ring = r() < 0.45 ? `--stain-at:${Math.round(r() * 100)}% ${Math.round(r() * 100)}%;` : "--stain-size:0 0;";
+    return `--tear:${tear(seed, edges, amp)};${ring}`;
+  };
+  const tape = (seed) => { const r = rng(seed); return `<span class="tp" style="left:${20 + r() * 50}%;--r:${(r() * 16 - 8).toFixed(1)}deg"></span>`; };
+
+  // Decorative paper drawn in CSS: one per stage, alongside your own scraps
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   function drawn(kind, st, i) {
     const year = esc(st.year || "");
-    if (kind === "news") return `<div class="news"><b>The Evening Edition</b><small><span>New York</span><span>${year || "Vol. " + (i + 1)}</span></small><i></i></div>`;
-    if (kind === "ticket") return `<div class="ticket"><b>Admit One</b><span>Stage ${pad(i + 1)}${year ? " · " + year : ""}</span><em>No. ${String(950855 + i * 7919).slice(-6)}</em></div>`;
+    if (kind === "ticket") return `<div class="ticket paper" style="${paper(i + 300, "lr", 1.2)}"><b>Admit One</b><span>Stage ${pad(i + 1)}${year ? " · " + year : ""}</span><em>No. ${String(950855 + i * 7919).slice(-6)}</em></div>`;
     if (kind === "cal") {
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => `<span>${d}</span>`).join("");
       const nums = Array.from({ length: 14 }, (_, k) => `<span>${k + 1}</span>`).join("");
-      return `<div class="cal"><b>${months[(i * 5 + 3) % 12]}<span>${year}</span></b><i>${days}${nums}</i></div>`;
+      return `<div class="cal paper" style="${paper(i + 400, "tb", 2)}"><b>${months[(i * 5 + 3) % 12]}<span>${year}</span></b><i>${days}${nums}</i></div>`;
     }
-    return `<div class="receipt"><b>THANK YOU</b>STAGE ${pad(i + 1)}<br>- - - - - - - - - -<br>TOTAL ........ 0.00<em>no receipts required</em></div>`;
+    return `<div class="receipt paper" style="${paper(i + 500, "tb", 2.4)}"><b>THANK YOU</b>STAGE ${pad(i + 1)}<br>- - - - - - - - - -<br>TOTAL ........ 0.00<em>no receipts required</em></div>`;
   }
-  function scraps(st, i) {
-    const own = (st.scraps || []).filter(Boolean);
-    const imgs = own.length ? own : (board.scraps || []).filter(Boolean);
-    if (imgs.length) {
-      const a = imgs[(i * 2) % imgs.length], b = imgs[(i * 2 + 1) % imgs.length];
-      return `<img class="scrap scrap--a" src="${esc(a)}" alt="" loading="lazy">` +
-             (imgs.length > 1 || own.length ? `<img class="scrap scrap--b" src="${esc(b)}" alt="" loading="lazy">` : "");
+
+  // Your scraps: newspaper clippings (editable text) and photos behind each stage
+  const norm = (s) => typeof s === "string" ? { type: "photo", src: s }
+    : s && s.type === "news" ? { type: "news", headline: s.headline || "", text: s.text || "" }
+    : { type: "photo", src: (s && s.src) || "" };
+  const blankScraps = () => [{ type: "news", headline: "", text: "" }, { type: "photo", src: "" }, { type: "news", headline: "", text: "" }, { type: "photo", src: "" }];
+
+  function scrapText(tag, cls, k, key, val, ph) {
+    if (editing) return `<${tag} class="${cls}" contenteditable="plaintext-only" data-sf="${key}" data-ph="${ph}">${esc(val)}</${tag}>`;
+    return val ? `<${tag} class="${cls}">${esc(val)}</${tag}>` : "";
+  }
+  function scrapHTML(s, st, i, k, pos) {
+    const seed = i * 97 + k * 13;
+    if (s.type === "news") {
+      const head = scrapText("h4", "news__head", k, "headline", s.headline, "Headline");
+      const body = scrapText("p", "news__body", k, "text", s.text, "Type the article here");
+      const fake = !editing && !s.headline ? `<h4 class="news__head">The Evening Edition</h4>` : "";
+      const lines = !editing && !s.text ? `<i class="news__lines"></i>` : "";
+      return `<div class="scrap news paper" data-sk="${k}" style="${pos}${paper(seed, "trbl", 2)}">
+        <small><span>New York</span><span>${esc(st.year || "")}</span></small>${fake}${head}${body}${lines}${k % 2 ? "" : tape(seed)}</div>`;
     }
-    const kinds = ["news", "ticket", "cal", "receipt"];
-    return `<div class="scrap scrap--a">${drawn(kinds[i % 4], st, i)}</div><div class="scrap scrap--b">${drawn(kinds[(i + 2) % 4], st, i)}</div>`;
+    const pic = s.src ? `<img src="${esc(s.src)}" alt="" loading="lazy">` : `<div class="ph" aria-hidden="true">Photo</div>`;
+    return `<figure class="scrap print paper" data-sk="${k}" style="${pos}${paper(seed, k % 2 ? "b" : "r", 1.4)}">${pic}${tape(seed + 1)}</figure>`;
+  }
+
+  // Where scraps sit around a stage, in --u: x, y, width, tilt. Mirrored on flipped stages.
+  const slots = {
+    news:  [[42, -15, 62, 4], [-28, 64, 56, -6], [58, 100, 54, 5], [-20, -22, 48, -3]],
+    photo: [[-24, -6, 40, -9], [76, 56, 40, 8], [-12, 122, 38, 6], [86, -12, 34, -5]],
+    deco: [72, 136, 40, -4]
+  };
+  const place = ([x, y, w, r], flip, bump = 0) =>
+    `left:calc(var(--u) * ${flip ? 100 - x - w : x});top:calc(var(--u) * ${y + bump});width:calc(var(--u) * ${w});transform:rotate(${flip ? -r : r}deg);`;
+
+  function scraps(st, i) {
+    const flip = i % 2 === 1, seen = { news: 0, photo: 0 };
+    const list = st.scraps.length ? st.scraps : [{ type: "news", headline: "", text: "" }];
+    const own = list.map((s, k) => {
+      const n = seen[s.type]++, set = slots[s.type];
+      return scrapHTML(s, st, i, k, place(set[n % set.length], flip, Math.floor(n / set.length) * 34));
+    }).join("");
+    const kinds = ["ticket", "cal", "receipt"];
+    return `<div class="scrap" style="${place(slots.deco, flip)}">${drawn(kinds[i % 3], st, i)}</div>` + own;
+  }
+
+  // Edit mode: the scraps laid out flat under the stage, so they're easy to fill in
+  function behind(st, i) {
+    const items = st.scraps.map((s, k) => `<div class="behind__item">
+        ${scrapHTML(s, st, i, k, "")}
+        ${s.type === "photo" ? `<input data-sk="${k}" data-sf="src" value="${esc(s.src)}" placeholder="images/journey/photo.jpg">` : ""}
+        <button class="behind__rm" type="button" data-tool="rm-scrap" data-sk="${k}" aria-label="Remove">&times;</button>
+      </div>`).join("");
+    return `<div class="behind" data-i="${i}">
+      <h4>Behind this stage</h4>
+      <div class="behind__grid">${items}</div>
+      <div class="tools__row">
+        <button type="button" data-tool="add-news">+ Newspaper</button>
+        <button type="button" data-tool="add-photo">+ Photo</button>
+      </div>
+    </div>`;
   }
 
   const ytId = (u) => (String(u).match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/)([\w-]{11})/) || [])[1];
@@ -70,7 +153,7 @@
 
   function tools(st, i) {
     if (!editing) return "";
-    const p = st.photos || [], s = st.scraps || [];
+    const p = st.photos || [];
     return `<div class="tools" data-i="${i}">
       <label>Type
         <select data-tool="kind">
@@ -80,7 +163,7 @@
       ${st.kind === "video" ? `<label>Video <input data-tool="video" value="${esc(st.video || "")}" placeholder="YouTube link or images/journey/clip.mp4"></label>` : ""}
       <label>Photo 1 <input data-tool="photo0" value="${esc(p[0] || "")}" placeholder="images/journey/photo.jpg"></label>
       <label>Photo 2 <input data-tool="photo1" value="${esc(p[1] || "")}" placeholder="optional"></label>
-      <label>Scraps behind, this stage only <input data-tool="scraps" value="${esc(s.join(", "))}" placeholder="optional, e.g. images/journey/board/ticket.png"></label>
+      <label>Background: a photo of you at this age, fills the wall <input data-tool="background" value="${esc(st.background || "")}" placeholder="images/journey/board/age-10.jpg"></label>
       <div class="tools__row">
         <button type="button" data-tool="up">Move up</button>
         <button type="button" data-tool="down">Move down</button>
@@ -106,20 +189,21 @@
       ? `<div class="marker" contenteditable="plaintext-only" data-field="note" data-ph="Optional red note, like a lyric">${esc(st.note || "")}</div>`
       : st.note ? `<div class="marker"><span>${esc(st.note)}</span></div>` : "";
     return `<article class="stop${i % 2 ? " flip" : ""}" data-i="${i}">
-      ${scraps(st, i)}
+      ${editing ? "" : scraps(st, i)}
       ${main}${small}${marker}
-      <div class="note">
+      <div class="note paper" style="${paper(i + 700, "t", 2.2)}">
         <p class="note__label">Stage ${pad(i + 1)}</p>
         ${box("p", "note__year", "year", st.year, "Year")}
         ${box("p", "note__text", "text", st.text, "Write about this stage.")}
       </div>
+      ${editing ? behind(st, i) : ""}
       ${tools(st, i)}
     </article>`;
   }
 
   const intro = `<section class="stop" data-stop="intro">
-      <div class="scrap scrap--a">${drawn("cal", {}, 0)}</div>
-      <div class="masthead"><span class="pin"></span>
+      <div class="scrap" style="${place([44, -18, 50, 6], false)}">${drawn("cal", {}, 0)}</div>
+      <div class="masthead paper" style="${paper(901, "b", 2.6)}"><span class="pin"></span>
         <small><span>Vol. I</span><span>New York</span></small>
         <h1>The Journey</h1>
         <p>Follow the string. Scroll, or press the button.</p>
@@ -127,8 +211,8 @@
       </div>
     </section>`;
   const outro = `<section class="stop" data-stop="outro">
-      <div class="scrap scrap--b">${drawn("ticket", {}, 8)}</div>
-      <div class="end"><span class="pin"></span>
+      <div class="scrap" style="${place([-14, 52, 50, -7], false)}">${drawn("ticket", {}, 8)}</div>
+      <div class="end paper" style="${paper(902, "trbl", 1.4)}"><span class="pin"></span>
         <h2>to be continued&hellip;</h2>
         <a class="btn btn--sig" href="#join" data-join>Get the next chapter first</a>
       </div>
@@ -137,13 +221,12 @@
       <div class="tools">
         <h3>Edit your journey</h3>
         <p>Type into the dashed boxes. For pictures, upload them to <b>images/journey/</b> on GitHub (or send them to Claude) and type the path, like <b>images/journey/first-show.jpg</b>. When you're done, press <b>Download journey.js</b>. Your edits stay in this browser until then.</p>
-        <label>Board background (the wall) <input data-board="background" value="${esc(board.background || "")}" placeholder="images/journey/board/bookshelf.jpg"></label>
-        <label>Paper scraps behind photos, separated by commas <input data-board="scraps" value="${esc((board.scraps || []).join(", "))}" placeholder="images/journey/board/newspaper.png, images/journey/board/ticket.png"></label>
+        <label>Wall for the start and end, and any stage without its own background <input data-board="background" value="${esc(board.background || "")}" placeholder="images/journey/board/bookshelf.jpg"></label>
       </div>
     </section>`;
 
   /* ---------- Render ---------- */
-  let els = [], boxes = [], frames = [], H = 1, cur = null, target = null, raf = 0;
+  let els = [], bgs = [], boxes = [], frames = [], H = 1, cur = null, target = null, raf = 0;
 
   function render() {
     if (board.background) {
@@ -153,6 +236,10 @@
       boardEl.style.backgroundImage = "";
       boardEl.classList.remove("has-photo");
     }
+    // one wall photo per stage (stage 1 is the second stop, after the intro)
+    bgsEl.innerHTML = editing ? "" : stages.map((s) => s.background
+      ? `<div class="bg" style="background-image:url(&quot;${esc(encodeURI(s.background))}&quot;)"></div>` : "<i></i>").join("");
+    bgs = [null, ...bgsEl.children].map((el) => (el && el.tagName === "DIV" ? el : null));
     const body = stages.map(stageHTML).join("");
     world.innerHTML = editing ? editIntro() + body : `<svg class="string" aria-hidden="true"></svg>` + intro + body + outro;
     els = [...world.querySelectorAll(".stop")];
@@ -223,19 +310,29 @@
     const dip = reduced ? 0 : Math.sin(Math.PI * f) * 0.16; // drift back a little between stages
     const s = lerp(frames[i], frames[Math.min(i + 1, last)], e) * (1 - dip);
     const cx = lerp(A.cx, B.cx, e), cy = lerp(A.cy, B.cy, e);
-    return { s, tx: cam.clientWidth / 2 - s * cx, ty: availH() / 2 - s * cy + 8 };
+    return { s, p, tx: cam.clientWidth / 2 - s * cx, ty: availH() / 2 - s * cy + 8 };
   }
 
   function apply(t) {
     world.style.transform = `translate3d(${t.tx}px, ${t.ty}px, 0) scale(${t.s})`;
     boardEl.style.backgroundPosition = `${t.tx * 0.25}px ${t.ty * 0.25}px`;
+    // wall photos: the next one fades in over the current one as you move between stages
+    const i = Math.floor(t.p), e = ease(t.p - i);
+    bgs.forEach((el, k) => {
+      if (!el) return;
+      let o = 0;
+      if (k === i) o = bgs[i + 1] ? 1 : 1 - e;
+      else if (k === i + 1) o = e;
+      el.style.opacity = o.toFixed(3);
+      if (o > 0) el.style.transform = `scale(1.1) translate3d(0, ${((k - t.p) * 3).toFixed(2)}%, 0)`;
+    });
   }
 
   let lastT = 0;
   function tick(now) {
     const dt = Math.min(64, now - (lastT || now)); lastT = now;
     const k = 1 - Math.pow(1 - 0.14, dt / 16.7);
-    cur = { s: lerp(cur.s, target.s, k), tx: lerp(cur.tx, target.tx, k), ty: lerp(cur.ty, target.ty, k) };
+    cur = { s: lerp(cur.s, target.s, k), p: lerp(cur.p, target.p, k), tx: lerp(cur.tx, target.tx, k), ty: lerp(cur.ty, target.ty, k) };
     apply(cur);
     const done = Math.abs(cur.tx - target.tx) < 0.1 && Math.abs(cur.ty - target.ty) < 0.1 && Math.abs(cur.s - target.s) < 0.0005;
     if (done) { apply((cur = target)); raf = 0; lastT = 0; } else raf = requestAnimationFrame(tick);
@@ -293,13 +390,17 @@
   });
 
   /* ---------- Edit mode ---------- */
-  const paths = (v) => v.split(",").map((s) => s.trim()).filter(Boolean);
   if (editing) {
     document.body.classList.add("is-editing");
     $(".editbar").hidden = false;
     $(".controls").hidden = true;
 
     world.addEventListener("input", (e) => {
+      const sf = e.target.closest("[contenteditable][data-sf]");
+      if (sf) {
+        stages[+sf.closest(".stop").dataset.i].scraps[+sf.closest("[data-sk]").dataset.sk][sf.dataset.sf] = sf.innerText.trim();
+        saveDraft(); return;
+      }
       const f = e.target.closest("[data-field]");
       if (!f) return;
       stages[+f.closest(".stop").dataset.i][f.dataset.field] = f.innerText.trim();
@@ -308,7 +409,12 @@
     world.addEventListener("change", (e) => {
       const bf = e.target.closest("[data-board]");
       if (bf) {
-        board[bf.dataset.board] = bf.dataset.board === "scraps" ? paths(bf.value) : bf.value.trim();
+        board[bf.dataset.board] = bf.value.trim();
+        saveDraft(); render(); return;
+      }
+      const src = e.target.closest("input[data-sf]");
+      if (src) {
+        stages[+src.closest(".stop").dataset.i].scraps[+src.dataset.sk].src = src.value.trim();
         saveDraft(); render(); return;
       }
       const t = e.target.closest("[data-tool]");
@@ -321,14 +427,17 @@
         st.photos[+tool.slice(-1)] = t.value.trim();
       }
       if (tool === "video") st.video = t.value.trim();
-      if (tool === "scraps") st.scraps = paths(t.value);
+      if (tool === "background") st.background = t.value.trim();
       saveDraft(); render();
     });
     world.addEventListener("click", (e) => {
       const t = e.target.closest("button[data-tool]");
       if (!t) return;
-      const i = +t.closest(".tools").dataset.i;
+      const i = +t.closest("[data-i]").dataset.i, sc = stages[i].scraps;
       const tool = t.dataset.tool;
+      if (tool === "add-news") sc.push({ type: "news", headline: "", text: "" });
+      if (tool === "add-photo") sc.push({ type: "photo", src: "" });
+      if (tool === "rm-scrap") sc.splice(+t.dataset.sk, 1);
       if (tool === "up" && i > 0) [stages[i - 1], stages[i]] = [stages[i], stages[i - 1]];
       if (tool === "down" && i < stages.length - 1) [stages[i + 1], stages[i]] = [stages[i], stages[i + 1]];
       if (tool === "delete" && confirm("Delete this stage?")) stages.splice(i, 1);
@@ -338,7 +447,7 @@
     $(".editbar").addEventListener("click", (e) => {
       const act = e.target.closest("[data-act]")?.dataset.act;
       if (act === "add") {
-        stages.push({ kind: "postcard", year: "", title: "", text: "", note: "", photos: [], video: "", scraps: [] });
+        stages.push({ kind: "postcard", year: "", title: "", text: "", note: "", photos: [], video: "", background: "", scraps: blankScraps() });
         saveDraft(); render();
         els[els.length - 1].scrollIntoView({ behavior: "smooth", block: "center" });
       }
@@ -347,17 +456,18 @@
         try { localStorage.removeItem(DRAFT); } catch {}
         board = clone(window.JOURNEY_BOARD || { background: "", scraps: [] });
         stages = clone(window.JOURNEY || []);
-        render();
+        tidy(); render();
       }
     });
   }
 
   function download() {
-    const cleanBoard = { background: board.background || "", scraps: (board.scraps || []).filter(Boolean) };
+    const cleanBoard = { background: board.background || "" };
     const clean = stages.map((s) => ({
       kind: s.kind === "video" ? "video" : "postcard",
       year: s.year || "", title: s.title || "", text: s.text || "", note: s.note || "",
-      photos: (s.photos || []).filter(Boolean), video: s.video || "", scraps: (s.scraps || []).filter(Boolean)
+      photos: (s.photos || []).filter(Boolean), video: s.video || "", background: s.background || "",
+      scraps: s.scraps.map(norm)
     }));
     const head = `/* ============================================================
    JOURNEY — a scrapbook board, earliest stage at the top.
@@ -366,7 +476,9 @@
    kind:   "postcard" for smaller moments, "video" for bigger ones
    note:   optional red handwritten strip, e.g. a lyric
    photos: up to 2 image paths; video: a YouTube link or .mp4 path
-   scraps: paper bits behind the photos (board-wide or per stage)
+   background: a photo of you at that age; fills the wall and fades into the next
+   scraps: newspaper clippings { type: "news", headline, text } and
+           photos { type: "photo", src }, layered behind the stage
    ============================================================ */
 `;
     const text = head +
@@ -379,5 +491,8 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
+  // older files listed scraps as plain image paths
+  function tidy() { stages.forEach((s) => { s.background = s.background || ""; s.scraps = (s.scraps || []).map(norm); }); }
+  tidy();
   render();
 })();
