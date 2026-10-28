@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Xander Hudson</title>
+  <meta name="description" content="Xander Hudson writes romantic, cinematic songs from New York. Listen, find shows near you, and join the mailing list.">
+  <meta name="theme-color" content="#131417">
+  <meta property="og:title" content="Xander Hudson">
+  <meta property="og:description" content="Romantic, cinematic songs from New York.">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Gloock&family=Hanken+Grotesk:wght@400;500&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="./">Xander Hudson</a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="journey.html">Journey</a>
+      <a href="merch.html">Merch</a>
+      <a class="btn btn--hit btn--sm hide-sm" href="#join" data-join>Join</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Link-in-bio hero -->
+    <section class="hero">
+      <div class="hero__sky" aria-hidden="true"></div>
+      <div class="hero__inner">
+        <span class="tape hero__tape">New York</span>
+        <h1 class="hero__name">Xander<br>Hudson</h1>
+        <p class="hero__line">Songs for the most beautiful moments in ordinary situations.</p>
+        <div class="links">
+          <a class="btn btn--hit links__main" href="#join" data-join>Join my mailing list</a>
+          <a class="btn" data-link="spotify" data-track="spotify" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21Zm4.8 15.1a.65.65 0 0 1-.9.22c-2.46-1.5-5.56-1.84-9.2-1.01a.65.65 0 1 1-.3-1.27c3.99-.91 7.4-.52 10.17 1.17.31.19.4.59.23.89Zm1.28-2.85a.82.82 0 0 1-1.12.27c-2.82-1.73-7.12-2.23-10.45-1.22a.82.82 0 1 1-.47-1.57c3.8-1.15 8.54-.6 11.77 1.39.38.23.5.74.27 1.13Zm.11-2.97C14.8 8.77 9.2 8.58 5.96 9.56a.98.98 0 1 1-.57-1.88c3.72-1.13 9.9-.91 13.81 1.41a.98.98 0 0 1-1 1.69Z"/></svg>
+            Listen on Spotify</a>
+          <a class="btn" data-link="tiktok" data-track="tiktok" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 2h-3.3v13.3a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.1a6.3 6.3 0 1 0 5.3 6.2V8.6a7.7 7.7 0 0 0 4.4 1.4V6.7a4.4 4.4 0 0 1-4.4-4.4Z"/></svg>
+            Watch on TikTok</a>
+          <a class="btn" data-link="instagram" data-track="instagram" target="_blank" rel="noopener">Instagram</a>
+          <a class="btn" data-link="youtube" data-track="youtube" target="_blank" rel="noopener">YouTube</a>
+        </div>
+        <p class="scrap hero__scrap">no receipts required</p>
+      </div>
+    </section>
+
+    <!-- Tour + merch by continent -->
+    <section class="world" id="shows" aria-labelledby="world-title">
+      <div class="wrap">
+        <span class="label">Shows &amp; merch</span>
+        <h2 id="world-title">Find me near you.</h2>
+        <p class="world__hint">Tap your continent, then swipe through dates and merch for that region.</p>
+      </div>
+      <div class="fan" role="group" aria-label="Choose a continent">
+        <svg class="fan__svg" viewBox="0 0 600 560" aria-hidden="false"></svg>
+        <span class="tape fan__tape" aria-hidden="true">Tap your continent</span>
+      </div>
+      <div class="region" id="region" hidden>
+        <div class="wrap region__head">
+          <h3 class="region__name"></h3>
+          <div class="region__arrows">
+            <button class="region__arrow" type="button" data-dir="-1" aria-label="Previous">&larr;</button>
+            <button class="region__arrow" type="button" data-dir="1" aria-label="Next">&rarr;</button>
+          </div>
+        </div>
+        <div class="rail" tabindex="0" aria-label="Dates and merch"></div>
+      </div>
+    </section>
+
+    <!-- Early songs -->
+    <section class="songs" aria-labelledby="songs-title">
+      <div class="wrap songs__inner">
+        <div>
+          <span class="label">Early songs</span>
+          <h2 id="songs-title">The first postcards</h2>
+          <p class="songs__note">Each postcard ships with an image, a place and a date.</p>
+          <a class="btn" href="merch.html">Shop postcards</a>
+        </div>
+        <ol class="songs__list">
+          <li><span>01</span>Elevator Girl</li>
+          <li><span>02</span>Macbook</li>
+          <li><span>03</span>More Than My Love</li>
+          <li><span>04</span>Second Place</li>
+          <li><span>05</span>With You</li>
+          <li><span>06</span>If Only I Was You</li>
+          <li><span>07</span>&ldquo;Leave&rdquo; <em class="scrap">no receipts required.</em></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Bio -->
+    <section class="bio" aria-labelledby="bio-title">
+      <div class="wrap bio__inner">
+        <span class="label" id="bio-title">The short version</span>
+        <p class="bio__text">Xander Hudson writes romantic, cinematic songs that never land fully happy or fully sad. A jazz-trained guitarist raised in New York, he sings like a star and lives like everybody else: warm, easy, present. His songs chase a version of himself he hasn&rsquo;t caught yet, then stop for the few minutes he lets himself have the good thing anyway.</p>
+        <a class="btn" href="journey.html">See the journey</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="content/config.js"></script>
+  <script src="content/tour.js"></script>
+  <script src="content/merch.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/cards.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
