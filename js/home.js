@@ -1,64 +1,28 @@
-/* Lobby: the skyline, its depth on scroll, the bio reveal, song postcards
-   and the subway line of shows. */
+/* Lobby: the opening (intro, the scroll toward the door), the bio reveal,
+   song postcards and the subway line of shows. */
 (function () {
-  const { $, esc, rng, paper } = window.XH;
+  const { $, esc, paper } = window.XH;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- Skyline: three layers of New York, drawn once ---------- */
-  // Rooftops with water towers in front, one stepped spire behind, a few lit windows
-  function skyline(svg, seed, { towers = 0, spire = false, windows = 0 }) {
-    const r = rng(seed), W = 1200, H = 300;
-    let x = 0, out = "", lit = "";
-    while (x < W) {
-      const w = 34 + r() * 70, h = 70 + r() * 190, top = H - h;
-      out += `<rect x="${x.toFixed(0)}" y="${top.toFixed(0)}" width="${(w + 1).toFixed(0)}" height="${h.toFixed(0)}"/>`;
-      if (r() < 0.3) out += `<rect x="${(x + w * 0.2).toFixed(0)}" y="${(top - 14).toFixed(0)}" width="${(w * 0.6).toFixed(0)}" height="15"/>`;
-      if (towers && r() < towers) { // water tower: tank, cone, legs
-        const tx = x + w * (0.25 + r() * 0.4), ty = top;
-        out += `<rect x="${tx - 9}" y="${ty - 30}" width="18" height="22" rx="2"/><path d="M${tx - 11} ${ty - 30} L${tx} ${ty - 42} L${tx + 11} ${ty - 30}Z"/>` +
-               `<rect x="${tx - 8}" y="${ty - 9}" width="2" height="9"/><rect x="${tx + 6}" y="${ty - 9}" width="2" height="9"/>`;
-      }
-      for (let k = 0; k < windows; k++) if (r() < 0.5) {
-        lit += `<rect class="lit" x="${(x + 6 + r() * (w - 14)).toFixed(0)}" y="${(top + 12 + r() * (h - 30)).toFixed(0)}" width="4" height="6"/>`;
-      }
-      x += w;
-    }
-    if (spire) { // a stepped, Empire-ish tower
-      const c = W * 0.62;
-      out += `<path d="M${c - 46} ${H} V120 H${c - 30} V82 H${c - 16} V48 H${c - 6} V8 H${c + 6} V48 H${c + 16} V82 H${c + 30} V120 H${c + 46} V${H}Z"/>`;
-    }
-    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-    svg.innerHTML = out + lit;
-  }
-  skyline($(".skyline--far"), 11, { spire: true });
-  skyline($(".skyline--mid"), 23, { windows: 3 });
-  skyline($(".skyline--near"), 37, { towers: 0.35, windows: 1 });
+  /* ---------- Intro: once per visit ---------- */
+  const intro = $(".intro");
+  let seen = false;
+  try { seen = sessionStorage.getItem("xh_intro") === "1"; sessionStorage.setItem("xh_intro", "1"); } catch {}
+  if (seen || reduced) { intro.classList.add("is-skipped"); document.body.classList.add("no-intro"); }
 
-  /* ---------- Depth: layers drift apart as you scroll; photo tilts with the pointer ---------- */
-  const hero = $(".hero");
-  const layers = [
-    [".hero__sun", 0.05], [".skyline--far", 0.1], [".skyline--mid", 0.2],
-    [".hero__photo", 0.12], [".hero__reflection", 0.3], [".skyline--near", 0.34]
-  ].map(([s, k]) => [$(s), k]);
-  let px = 0, py = 0, raf = 0, visible = true;
+  /* ---------- Scrolling pulls you toward the door ---------- */
+  const stage = $(".stage"), header = $(".site-header");
+  let raf = 0;
   function paint() {
     raf = 0;
-    const y = scrollY;
-    layers.forEach(([el, k]) => {
-      el.style.transform = `translate3d(${(px * k * 40).toFixed(1)}px, ${(y * k + py * k * 20).toFixed(1)}px, 0)`;
-    });
+    const span = stage.offsetHeight - innerHeight;
+    const p = span > 0 ? Math.min(1, Math.max(0, scrollY / span)) : 0;
+    stage.style.setProperty("--p", p.toFixed(3));
+    header.classList.toggle("is-solid", scrollY > stage.offsetHeight - innerHeight * 0.6);
   }
-  const ask = () => { if (visible && !raf) raf = requestAnimationFrame(paint); };
-  if (!reduced) {
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hero);
-    addEventListener("scroll", ask, { passive: true });
-    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
-      hero.addEventListener("pointermove", (e) => {
-        px = e.clientX / innerWidth - 0.5; py = e.clientY / innerHeight - 0.5; ask();
-      });
-      hero.addEventListener("pointerleave", () => { px = py = 0; ask(); });
-    }
-  }
+  if (!reduced) addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
+  paint();
+  $(".stage__now").innerHTML = window.XH.soundButton;
 
   /* ---------- Bio: the lines arrive one after another ---------- */
   const sheet = $(".reveal");

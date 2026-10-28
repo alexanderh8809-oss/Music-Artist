@@ -3,72 +3,113 @@
    the bio on a lyric sheet, song postcards, a subway line of shows.
    ============================================================ */
 
-/* ---------- Hero ---------- */
-.hero { position: relative; overflow: hidden; min-height: calc(100svh - var(--header-h)); display: flex; align-items: flex-end; isolation: isolate; }
-.hero__scene { position: absolute; inset: 0; z-index: -1; }
-.hero__scene > * { position: absolute; will-change: transform; }
+/* ---------- Opening: a lit doorway, chrome name, a record out of its sleeve ----------
+   The section is taller than the screen; its inside stays pinned while you scroll,
+   and the scroll pulls you toward the door (js/home.js sets --p from 0 to 1). */
+.lobby { background: #0b0b0c; }
+.site-header--clear { position: fixed; left: 0; right: 0; background: none; border-bottom: 0; backdrop-filter: none; -webkit-backdrop-filter: none; transition: background .4s; }
+.site-header--clear.is-solid { background: rgba(11,11,12,.86); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.stage { --p: 0; position: relative; height: 190vh; background: #0b0b0c; }
+.stage__pin { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; }
+.stage__pin::before { /* grain + a falloff of light around the door */
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(60% 55% at 50% 62%, rgba(255,214,170,.10), transparent 70%), #0b0b0c;
+}
+.stage__pin > * { position: absolute; }
 
-.hero__sky {
-  inset: 0;
-  background: linear-gradient(180deg, #121420 0%, #1f2036 26%, #4a3552 46%, #a24d47 64%, #f07a45 78%, #ffb071 88%, #f6c995 100%);
+/* the door: him, lit from behind */
+.stage__door {
+  left: 50%; bottom: 0; width: min(46vw, 340px); aspect-ratio: 3 / 4.4; translate: -50% 0;
+  transform: scale(calc(1 + var(--p) * 1.9)); transform-origin: 50% 70%;
+  box-shadow: 0 0 0 1px rgba(255,236,214,.35), 0 0 60px 10px rgba(255,220,180,.18), 0 0 160px 40px rgba(255,170,110,.12);
+  overflow: hidden; will-change: transform;
 }
-.hero__sun {
-  width: 46vmin; height: 46vmin; left: 50%; bottom: 14%; translate: -50% 0; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,214,160,.95) 0 28%, rgba(255,150,90,.5) 46%, rgba(255,106,61,0) 70%);
-}
-.skyline { left: -4%; width: 108%; bottom: 0; }
-.skyline--far  { height: 44%; fill: #6b3c4b; opacity: .55; }
-.skyline--mid  { height: 36%; fill: #2a1f2c; }
-.skyline--near { height: 24%; fill: var(--ink); }
-.skyline .lit { fill: #ffc27a; opacity: .85; }
-
-/* Xander in the studio, cropped off the right edge */
-.hero__photo {
-  margin: 0; right: 0; top: 0; bottom: 18%; width: min(78vw, 640px);
-  -webkit-mask: linear-gradient(90deg, transparent, #000 34%), linear-gradient(0deg, transparent, #000 30%);
-  -webkit-mask-composite: source-in;
-  mask: linear-gradient(90deg, transparent, #000 34%), linear-gradient(0deg, transparent, #000 30%); mask-composite: intersect;
-}
-.hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 96% 30%; filter: sepia(.2) saturate(.9) contrast(1.05) brightness(.92); }
-
-/* the quiet double: his reflection in a window pane, a beat behind */
-.hero__reflection {
-  margin: 0; left: 6%; top: 10%; width: min(30vw, 220px); aspect-ratio: 3 / 4; overflow: hidden;
-  border: 1px solid rgba(242,236,226,.14); opacity: .22; mix-blend-mode: screen;
-  background: linear-gradient(135deg, rgba(255,255,255,.06), transparent 50%);
-}
-.hero__reflection img { width: 100%; height: 100%; object-fit: cover; object-position: 75% 30%; transform: scaleX(-1); filter: blur(1.5px) grayscale(.4); }
-.hero__reflection::after { /* window mullion */
+.stage__door img { width: 100%; height: 100%; object-fit: cover; object-position: 92% 30%; filter: grayscale(.55) contrast(1.15) brightness(.95) sepia(.12); }
+.stage__door::after { /* the room falls into shadow toward the floor */
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent calc(50% - 1px), rgba(242,236,226,.25) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
-              linear-gradient(0deg, transparent calc(50% - 1px), rgba(242,236,226,.25) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
+  background: linear-gradient(180deg, rgba(255,240,220,.08), transparent 30%, transparent 60%, rgba(11,11,12,.55));
 }
 
-.hero__inner { position: relative; width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 var(--gutter) 64px; }
-.hero__plaque {
-  display: inline-block; margin: 0 0 18px; padding: 6px 12px 5px;
-  font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; font-size: 13px;
-  color: #2a2016; background: linear-gradient(180deg, #d9b783, var(--brass)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25), 0 2px 6px rgba(0,0,0,.4);
-}
-.hero__plaque span { opacity: .5; }
-.hero__name {
-  font-size: clamp(72px, 21vw, 184px); line-height: .84; letter-spacing: -.025em;
-  text-shadow: 0 4px 40px rgba(19,20,23,.45);
-}
-.hero__line { margin: 18px 0 26px; max-width: 30ch; font-size: clamp(17px, 2.2vw, 20px); color: var(--bone); text-shadow: 0 1px 12px rgba(0,0,0,.6); }
-.links { display: flex; flex-direction: column; gap: 12px; max-width: 420px; }
-.links__main { min-height: 60px; font-size: 19px; }
-.links__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.links__row .btn { background: rgba(19,20,23,.55); border-color: rgba(242,236,226,.35); }
-.hero__cue { position: absolute; right: var(--gutter); bottom: 28px; width: 44px; height: 44px; display: grid; place-items: center; }
-.hero__cue i { width: 1.5px; height: 40px; background: linear-gradient(var(--bone), transparent); animation: drip 2.4s var(--ease) infinite; }
-@keyframes drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+/* the name: arched chrome with glints */
+.stage__name { left: 50%; top: calc(var(--header-h) + 4vh); width: min(96vw, 1000px); translate: -50% 0; margin: 0;
+  transform: perspective(900px) rotateX(calc(14deg - var(--p) * 10deg)) scale(calc(1 + var(--p) * .35)) translateY(calc(var(--p) * -14vh));
+  opacity: calc(1 - var(--p) * 1.3); transform-origin: 50% 100%; will-change: transform, opacity; }
+.stage__name svg { display: block; width: 100%; height: auto; overflow: visible; }
+.stage__name text { font-family: var(--f-head); font-size: 168px; letter-spacing: .01em; }
+.stage__chrome text { fill: url(#chrome); stroke: rgba(255,255,255,.6); stroke-width: 1; }
+.stage__glow text { fill: #fff; opacity: .5; }
+.glint { position: absolute; left: var(--x); top: var(--y); width: 28px; height: 28px; margin: -14px 0 0 -14px; pointer-events: none;
+  background: radial-gradient(circle, #fff 0 8%, transparent 12%), linear-gradient(90deg, transparent 47%, #fff 50%, transparent 53%), linear-gradient(0deg, transparent 47%, #fff 50%, transparent 53%);
+  filter: drop-shadow(0 0 6px #fff); animation: glint 3s var(--d) ease-in-out infinite; }
+@keyframes glint { 0%, 100% { transform: scale(.2) rotate(0); opacity: 0; } 45% { transform: scale(1) rotate(45deg); opacity: 1; } 60% { opacity: .9; } }
 
-@media (min-width: 900px) {
-  .hero { align-items: center; }
-  .hero__photo { bottom: 0; width: 52vw; max-width: none; }
-  .hero__inner { padding-bottom: 0; }
-  .hero__reflection { left: auto; right: 54vw; top: 14%; }
+/* the record, half out of its sleeve, on the right */
+.stage__record { right: max(-60px, -8vw); top: 46%; width: min(34vw, 330px); aspect-ratio: 1; transform: translate(calc(var(--p) * 40vw), 0); will-change: transform; }
+.sleeve { position: absolute; inset: 0; z-index: 2; background: #1a1a1c; box-shadow: 0 20px 50px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.08); overflow: hidden; }
+.sleeve img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.6) contrast(1.1) brightness(.7); }
+.sleeve span { position: absolute; left: 8%; bottom: 7%; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; font-size: 12px; line-height: 1.3; color: var(--bone); }
+.disc {
+  position: absolute; inset: 3%; z-index: 1; border-radius: 50%; translate: -46% 0;
+  background:
+    radial-gradient(circle, #0b0b0c 0 2.2%, var(--sunset) 2.6% 15%, #121214 15.4% 16.2%, transparent 16.6%),
+    repeating-radial-gradient(circle, #141416 0 1.5px, #1f1f22 2px 3px), #111;
+  box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 0 0 2px #070708;
+  display: grid; place-items: center; animation: spin 7s linear infinite;
+}
+.disc::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 30deg, transparent 0 10%, rgba(255,255,255,.12) 14%, transparent 20% 60%, rgba(255,255,255,.08) 64%, transparent 70%); }
+.disc b { font-family: var(--f-label); font-stretch: 62%; font-weight: 800; font-size: 9px; letter-spacing: .14em; line-height: 1.2; text-align: center; color: var(--ink); }
+@keyframes spin { to { rotate: 360deg; } }
+
+/* tiny type at the edges */
+.stage__meta { top: calc(var(--header-h) + 6px); right: var(--gutter); margin: 0; text-align: right; display: grid; gap: 0;
+  font-family: var(--f-body); font-weight: 600; font-size: clamp(11px, 1.3vw, 17px); line-height: 1.15; letter-spacing: -.01em; color: rgba(242,236,226,.82); opacity: calc(1 - var(--p) * 2); }
+.stage__side { top: 50%; font-family: var(--f-body); font-weight: 600; font-size: 12px; color: rgba(242,236,226,.6); }
+.stage__side--l { left: var(--gutter); } .stage__side--r { right: var(--gutter); }
+.stage__bio { left: var(--gutter); bottom: 9vh; width: min(30vw, 320px); opacity: calc(1 - var(--p) * 2.2); }
+.stage__bio .label { color: var(--bone-dim); font-size: 12px; margin: 0 0 8px; }
+.stage__bio p:not(.label) { margin: 0 0 16px; font-size: 15px; line-height: 1.45; color: rgba(242,236,226,.82); }
+.stage__links { left: var(--gutter); bottom: 22px; display: flex; gap: 16px; flex-wrap: wrap; }
+.stage__links a { text-decoration: none; font-weight: 600; font-size: 13px; color: rgba(242,236,226,.72); }
+.stage__links a:hover { color: var(--bone); }
+.stage__now { right: var(--gutter); bottom: 16px; padding: 6px 14px 6px 6px; border-radius: 4px; background: rgba(28,30,35,.75); border: 1px solid rgba(242,236,226,.1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.stage__now .sound { font-size: 13px; gap: 10px; }
+.stage__now .sound__knob { width: 32px; height: 32px; }
+.stage__now .nowplaying { display: none; }
+.stage__cue { left: 50%; bottom: 20px; translate: -50% 0; z-index: 3; text-decoration: none; font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: rgba(242,236,226,.6); opacity: calc(1 - var(--p) * 4); }
+
+/* phones: name on top, door in the middle, record peeking from the right, bio under */
+@media (max-width: 760px) {
+  .stage__meta { display: none; }
+  .stage__side { display: none; }
+  .stage__name { top: calc(var(--header-h) + 2vh); width: 104vw; }
+  .stage__door { bottom: auto; top: 30svh; width: 56vw; left: 38%; }
+  .stage__record { right: -22vw; top: 44svh; width: 40vw; }
+  .stage__bio { left: var(--gutter); right: var(--gutter); width: auto; bottom: 64px; background: linear-gradient(180deg, transparent, rgba(11,11,12,.9) 30%); padding-top: 40px; }
+  .stage__bio p:not(.label) { font-size: 15px; }
+  .stage__bio .btn { width: 100%; }
+  .stage__links { bottom: 20px; gap: 14px; }
+  .stage__now { bottom: 64px; display: none; }
+  .stage__cue { display: none; }
+}
+
+/* intro: the photo spins in on grain, then the screen opens */
+.intro { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: #0b0b0c; pointer-events: none;
+  animation: intro-out .6s 1.5s var(--ease) forwards; perspective: 700px; }
+.intro::after { content: ""; position: absolute; inset: 0; opacity: .12; background-image: var(--grain); }
+.intro__card { width: 92px; aspect-ratio: 1; box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 10px 30px rgba(0,0,0,.6); animation: intro-spin 1.5s var(--ease) both; }
+.intro__card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.6) contrast(1.1); }
+@keyframes intro-spin { 0% { transform: rotateY(-70deg) rotateX(20deg) scale(.6); opacity: 0; } 30% { opacity: 1; } 100% { transform: rotateY(12deg) rotateX(-6deg) scale(1.15); } }
+@keyframes intro-out { to { opacity: 0; visibility: hidden; } }
+.intro.is-skipped { display: none; }
+.lobby .stage__pin > * { animation: rise 1s 1.6s var(--ease) both; }
+.lobby.no-intro .stage__pin > * { animation: none; }
+@keyframes rise { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro { display: none; }
+  .stage { height: auto; }
+  .stage__pin { position: relative; }
+  .disc, .glint { animation: none; }
 }
 
 /* ---------- Bio: a lyric sheet ---------- */
@@ -135,10 +176,6 @@
 .stub-empty p { margin: 0 0 14px; color: #4a4339; }
 .stub-empty .label { color: #a3302a; }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero__cue i { animation: none; }
-  .hero__scene > * { will-change: auto; }
-}
 
 /* the X train: his line, every stop */
 .line-sign { display: flex; align-items: center; gap: 12px; margin: 26px 0 0; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 15px; color: var(--bone-dim); }
