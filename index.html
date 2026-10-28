@@ -32,6 +32,8 @@
     <!-- Lobby: a lit doorway, the name in chrome above it, a record coming out of its sleeve -->
     <section class="stage" aria-labelledby="hero-name">
       <div class="stage__pin">
+        <div class="stage__leak" aria-hidden="true"></div>
+        <div class="stage__frame" aria-hidden="true"><span>Vol. 01 &middot; Golden hour &middot; New York &middot; 2026</span></div>
         <p class="stage__meta" aria-label="The first songs">
           <span>&ldquo;Postcards&rdquo; First Songs</span>
           <span>aSide: Elevator Girl, Macbook, More Than My Love</span>
@@ -39,7 +41,6 @@
           <span>Written in New York, NY</span>
           <span>&copy;2026</span>
         </p>
-        <span class="stage__side stage__side--r" aria-hidden="true">01</span>
 
         <div class="stage__door" aria-hidden="true">
           <img src="images/journey/Producing.jpg" alt="" width="1050" height="1400" fetchpriority="high">
@@ -50,11 +51,11 @@
           <svg viewBox="0 0 1000 420" aria-hidden="true">
             <defs>
               <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#ffffff"/>
-                <stop offset=".38" stop-color="#d9dce6"/>
-                <stop offset=".5" stop-color="#8a8f9e"/>
-                <stop offset=".56" stop-color="#f4f5fb"/>
-                <stop offset="1" stop-color="#b9bdcb"/>
+                <stop offset="0" stop-color="#fffaf3"/>
+                <stop offset=".36" stop-color="#f3dcc6"/>
+                <stop offset=".5" stop-color="#a8705a"/>
+                <stop offset=".57" stop-color="#fff1e2"/>
+                <stop offset="1" stop-color="#eab48e"/>
               </linearGradient>
               <filter id="glow" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>
               <path id="arc1" d="M60,200 Q500,40 940,200"/>
@@ -73,9 +74,10 @@
           <i class="glint" style="--x:57%;--y:9%;--d:.4s"></i><i class="glint" style="--x:88%;--y:36%;--d:1.7s"></i>
           <i class="glint" style="--x:21%;--y:83%;--d:2.2s"></i><i class="glint" style="--x:74%;--y:80%;--d:.8s"></i>
         </h1>
+        <p class="stage__tag" aria-hidden="true"><span>Songs</span><span>for</span><span>the</span><span>most</span><span>beautiful</span><span>moments</span><span>in</span><span>ordinary</span><span>situations</span></p>
 
         <div class="stage__record" aria-hidden="true">
-          <div class="sleeve"><img src="images/journey/Piano.jpg" alt="" width="1400" height="1050"><span>Xander Hudson<br>Postcards</span></div>
+          <div class="sleeve"><img src="images/journey/Piano.jpg" alt="" width="1400" height="1050"><em>Postcards</em><span>Xander Hudson<br>First songs</span></div>
           <div class="disc"><b>XANDER<br>HUDSON</b></div>
         </div>
 
@@ -126,6 +128,25 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Moments: a board of real photos, like a Pinterest board -->
+    <section class="moments" aria-labelledby="moments-title">
+      <div class="wrap moments__head">
+        <span class="label">Moments</span>
+        <h2 id="moments-title">Ordinary situations,<br><em>beautiful moments.</em></h2>
+      </div>
+      <div class="tiles">
+        <figure class="tile tile--tall"><img src="images/journey/1st Performance.JPG" alt="Xander on stage with a guitar" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>first stage, 2016</figcaption></figure>
+        <div class="tile tile--neon" aria-hidden="true"><span>no receipts<br>required</span></div>
+        <figure class="tile"><img src="images/tiktok-delilah.jpg" alt="Xander on his bed singing Hey There Delilah" loading="lazy" decoding="async" width="628" height="412"><figcaption>6.5M views later</figcaption></figure>
+        <div class="tile tile--sky" aria-hidden="true"><b>Golden<br>hour</b><small>New York, NY</small></div>
+        <figure class="tile tile--tall"><img src="images/journey/Slash 1.JPG" alt="Xander dressed as Slash for Halloween" loading="lazy" decoding="async" width="1050" height="1400"><figcaption>halloween, as slash</figcaption></figure>
+        <figure class="tile"><img src="images/journey/Piano.jpg" alt="Xander playing keys" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>at the keys</figcaption></figure>
+        <div class="tile tile--quote" aria-hidden="true"><p>Never fully happy.<br>Never fully sad.</p></div>
+        <div class="tile tile--palette" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><small>the palette</small></div>
+        <figure class="tile"><img src="images/journey/Slash 2.JPG" alt="Xander with a guitar" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>wanted to shred</figcaption></figure>
       </div>
     </section>
 
