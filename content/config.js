@@ -17,5 +17,5 @@ window.SITE = {
   // Google Sheet backend: the "Web app URL" from backend/SETUP.md, step 4.
   // It saves mailing-list emails and visitor analytics to your Google Sheet.
   // While this is "", the Join form opens an email to contactEmail instead.
-  backend: ""
+  backend: "https://script.google.com/macros/s/AKfycbyRYkmyZnllihP7yMUeeLqJTTLR9mB-8S04JWCNj84dXffoLFDKFqSPXdCCKwA3pmDYJw/exec"
 };
