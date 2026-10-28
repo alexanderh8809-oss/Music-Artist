@@ -9,7 +9,7 @@
   <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Gloock&family=Hanken+Grotesk:wght@400;500&family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Gloock&family=Hanken+Grotesk:wght@400;500&family=Nothing+You+Could+Do&family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/journey.css">
 </head>
@@ -23,11 +23,13 @@
     </nav>
   </header>
 
+  <!-- The board stays put; scrolling moves the camera along the string -->
   <main class="cam" aria-label="Journey">
-    <div class="world">
-      <svg class="string" aria-hidden="true"></svg>
-    </div>
+    <div class="board" aria-hidden="true"></div>
+    <div class="world"></div>
+    <div class="vignette" aria-hidden="true"></div>
   </main>
+  <div class="track" aria-hidden="true"></div>
 
   <nav class="controls" aria-label="Journey stages">
     <button class="ctl ctl--prev" type="button" aria-label="Previous stage">&uarr;</button>
@@ -41,8 +43,6 @@
     <button class="btn btn--sig btn--sm" type="button" data-act="download">Download journey.js</button>
     <button class="btn btn--sm" type="button" data-act="reset">Discard edits</button>
   </div>
-
-  <footer class="site-footer" hidden></footer>
 
   <script src="content/config.js"></script>
   <script src="content/journey.js"></script>
