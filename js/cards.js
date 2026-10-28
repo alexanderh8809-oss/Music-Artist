@@ -20,6 +20,7 @@
     const note = item.scrap || where || `${item.title}, from the first songs.`;
     return `
       <article class="pcard" data-id="${esc(item.id)}">
+        <span class="pcard__record" aria-hidden="true"></span>
         <div class="pcard__in">
           <div class="pcard__face pcard__front paper" style="${paper(i * 11 + 3, "", 0)}">
             ${front}
@@ -39,6 +40,57 @@
         <button class="pcard__flip" type="button" aria-pressed="false" aria-label="Flip the ${esc(item.title)} postcard to see the back and price"></button>
       </article>`;
   };
+
+  /* ---------- Songs: the card in front plays its song, once sound is on ----------
+     Browsers only allow sound after a tap, so nothing plays until the visitor
+     presses a Sound button. After that, every card that comes to the front plays. */
+  const songs = {};
+  (window.MERCH || []).forEach((m) => (songs[m.id] = m));
+  let on = false, active = null, audio = null;
+  const buttons = () => document.querySelectorAll(".sound");
+  const labels = () => document.querySelectorAll(".nowplaying");
+  function show(text, sounding) {
+    labels().forEach((l) => {
+      l.classList.toggle("is-sounding", !!sounding);
+      l.innerHTML = text ? `<span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>${text}` : "";
+    });
+  }
+  function play() {
+    if (!active) return;
+    const item = songs[active.dataset.id] || {};
+    if (!on) { show(""); return; }
+    active.classList.add("is-playing");
+    if (!item.audio) { audio && audio.pause(); show(`<span><b>${esc(item.title)}</b>, preview coming soon</span>`); return; }
+    audio = audio || new Audio();
+    audio.onended = () => { active && active.classList.remove("is-sounding"); show(`<span><b>${esc(item.title)}</b> · played</span>`); };
+    if (!audio.src.endsWith(encodeURI(item.audio))) { audio.src = item.audio; }
+    audio.play().then(() => {
+      active.classList.add("is-sounding");
+      show(`<span>Now playing <b>${esc(item.title)}</b></span>`, true);
+      window.XH.track("song_play", item.id);
+    }).catch(() => show(`<span><b>${esc(item.title)}</b> couldn't play</span>`));
+  }
+  window.XH.player = {
+    // call with the postcard element that's now in front
+    focus(card) {
+      if (card === active) return;
+      if (active) active.classList.remove("is-playing", "is-sounding");
+      active = card;
+      play();
+    }
+  };
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".sound");
+    if (!b) return;
+    on = !on;
+    buttons().forEach((x) => { x.setAttribute("aria-pressed", on); x.querySelector(".sound__text").textContent = on ? "Sound on" : "Play the songs"; });
+    if (on) { window.XH.track("sound_on"); play(); }
+    else { audio && audio.pause(); active && active.classList.remove("is-playing", "is-sounding"); show(""); }
+  });
+  window.XH.soundButton = `<button class="sound" type="button" aria-pressed="false">
+      <span class="sound__knob" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z"/></svg></span>
+      <span class="sound__text">Play the songs</span></button>
+    <p class="nowplaying" aria-live="polite"></p>`;
 
   const fmt = (d) => {
     const dt = new Date(d + "T12:00:00");

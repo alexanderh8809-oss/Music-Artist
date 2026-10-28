@@ -15,10 +15,10 @@
 .rack__sign small { display: block; margin-top: 6px; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; font-size: 12px; }
 
 .rack__stage {
-  position: relative; height: calc(var(--w) / 1.5 + 70px); perspective: 1100px; touch-action: pan-y; cursor: grab; outline-offset: -4px;
+  position: relative; height: calc(var(--w) / 1.5 + 140px); perspective: 1100px; touch-action: pan-y; cursor: grab; outline-offset: -4px;
 }
 .rack__stage.is-dragging { cursor: grabbing; }
-.rack__spin { position: absolute; left: 50%; top: 20px; width: var(--w); height: calc(var(--w) / 1.5); margin-left: calc(var(--w) / -2); transform-style: preserve-3d; will-change: transform; }
+.rack__spin { position: absolute; left: 50%; top: 96px; width: var(--w); height: calc(var(--w) / 1.5); margin-left: calc(var(--w) / -2); transform-style: preserve-3d; will-change: transform; }
 .rack__spin.is-easing { transition: transform .7s var(--ease); }
 .rack__slot { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .rack__slot .pcard { --u: 3px; }
@@ -58,3 +58,4 @@
 .rack.is-flat .rack__spin { position: static; width: auto; height: auto; margin: 0; transform: none !important; display: grid; grid-auto-flow: column; grid-auto-columns: var(--w); gap: 20px; overflow-x: auto; padding: 10px var(--gutter) 20px; scroll-snap-type: x mandatory; }
 .rack.is-flat .rack__slot { position: relative; transform: none !important; scroll-snap-align: start; }
 .rack.is-flat .rack__pole, .rack.is-flat .rack__controls, .rack.is-flat .rack__hint { display: none; }
+.rack__sound { display: flex; flex-direction: column; align-items: center; margin-top: 18px; }

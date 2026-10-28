@@ -72,7 +72,21 @@
 
   /* ---------- Song postcards ---------- */
   const songs = (window.MERCH || []).filter((m) => !m.featured);
-  $(".songs__rail").innerHTML = songs.map((m, i) => window.XH.postcard(m, i)).join("");
+  const rail = $(".songs__rail");
+  rail.innerHTML = songs.map((m, i) => window.XH.postcard(m, i)).join("");
+  $(".songs__sound").innerHTML = window.XH.soundButton;
+  // the card most in view is the one that plays (the first one to begin with)
+  window.XH.player.focus(rail.querySelector(".pcard"));
+  if ("IntersectionObserver" in window) {
+    const seen = new Map();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => seen.set(e.target, e.intersectionRatio));
+      let best = null, max = 0.6;
+      seen.forEach((r, el) => { if (r > max) { max = r; best = el; } });
+      if (best) window.XH.player.focus(best);
+    }, { root: rail, threshold: [0.3, 0.6, 0.8, 1] });
+    rail.querySelectorAll(".pcard").forEach((c) => io.observe(c));
+  }
 
   /* ---------- Shows: one stop per continent ---------- */
   const regions = window.TOUR || [];

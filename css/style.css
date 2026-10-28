@@ -288,6 +288,58 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 400; line-height: 1; margi
 .ticket-stub p { margin: 2px 0 8px; color: #4a4339; font-size: 15px; }
 .ticket-stub .label { color: var(--verdigris-deep); }
 
+/* ---------- Pop-up: a ticket that slides up from the bottom, never a wall ---------- */
+.pop {
+  --bg: var(--bone); --u: 4px; position: fixed; z-index: 70; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom));
+  max-width: 400px; margin-left: auto; padding: 22px 22px 18px; color: var(--ink);
+  transform: translateY(calc(100% + 40px)) rotate(1.5deg); transition: transform .7s var(--ease);
+}
+.pop.is-in { transform: translateY(0) rotate(-1deg); }
+.pop > * { position: relative; z-index: 2; }
+.pop .label { color: #a3302a; }
+.pop h2 { font-size: 26px; margin: 6px 0 14px; }
+.pop .field { flex-direction: row; gap: 8px; }
+.pop .field input { flex: 1; min-width: 0; min-height: 48px; }
+.pop .btn--hit { min-height: 48px; padding: 0 18px; font-size: 15px; }
+.pop .form-msg { margin-top: 8px; min-height: 0; }
+.pop .form-msg .scrap { color: var(--verdigris-deep); }
+.pop__close { position: absolute !important; z-index: 3 !important; top: 4px; right: 4px; width: 44px; height: 44px; border: 0; background: none; font-size: 26px; color: #4a4339; }
+.journey-page .pop { bottom: calc(max(16px, env(safe-area-inset-bottom)) + 84px); } /* above the stage controls */
+
+/* ---------- Songs: a record slides out of the card that's playing ---------- */
+.pcard__record {
+  position: absolute; z-index: -1; top: 6%; left: 50%; width: 62%; aspect-ratio: 1; margin-left: -31%; border-radius: 50%;
+  background:
+    radial-gradient(circle, #111 0 3%, var(--sunset) 3.5% 17%, #191919 17.5% 19%, transparent 19.5%),
+    repeating-radial-gradient(circle, #1b1b1d 0 1.5px, #262629 2px 3px),
+    #161618;
+  box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 0 0 2px #0c0c0d;
+  transform: translateY(0); transition: transform .8s var(--ease);
+}
+.pcard__record::after { /* the shine that shows it turning */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 20deg, transparent 0 12%, rgba(255,255,255,.12) 16%, transparent 22% 62%, rgba(255,255,255,.08) 66%, transparent 72%);
+}
+.pcard.is-playing .pcard__record { transform: translateY(-46%); }
+.pcard.is-playing.is-sounding .pcard__record { animation: spin 1.8s linear infinite; }
+@keyframes spin { from { transform: translateY(-46%) rotate(0); } to { transform: translateY(-46%) rotate(360deg); } }
+.pcard__in { z-index: 1; }
+
+.sound {
+  display: inline-flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; color: var(--bone);
+  font-family: var(--f-label); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 16px;
+}
+.sound__knob { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 40% 35%, #2f3138, #17181c 70%); box-shadow: inset 0 0 0 1.5px rgba(184,146,90,.6); }
+.sound__knob svg { width: 18px; height: 18px; }
+.sound[aria-pressed="true"] .sound__knob { background: radial-gradient(circle at 40% 35%, #ffb48f, var(--sunset) 60%, #d9481f); color: var(--ink); box-shadow: 0 0 14px rgba(255,106,61,.5); }
+.nowplaying { display: flex; align-items: center; gap: 10px; min-height: 24px; margin: 10px 0 0; color: var(--bone-dim); font-size: 15px; }
+.nowplaying b { color: var(--bone); font-weight: 600; }
+.eq { display: inline-flex; gap: 3px; align-items: flex-end; height: 16px; }
+.eq i { width: 3px; height: 100%; background: var(--verdigris); transform-origin: bottom; animation: eq .9s ease-in-out infinite; }
+.eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.6s; } .eq i:nth-child(4) { animation-delay: -.15s; }
+@keyframes eq { 0%, 100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
+.nowplaying:not(.is-sounding) .eq i { animation: none; transform: scaleY(.25); }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }

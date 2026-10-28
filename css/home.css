@@ -96,10 +96,11 @@
 .songs { padding: 72px 0 64px; }
 .songs__head h2, .shows h2 { font-size: clamp(40px, 9vw, 72px); margin: 10px 0 8px; max-width: 14ch; }
 .songs__head p, .shows__hint { margin: 0; color: var(--bone-dim); }
+.songs__sound { margin-top: 18px; }
 .songs__rail {
   display: grid; grid-auto-flow: column; grid-auto-columns: min(82vw, 380px); gap: 22px;
   overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
-  padding: 34px var(--gutter) 40px; scroll-padding: 0 var(--gutter); scrollbar-width: none;
+  padding: 104px var(--gutter) 40px; scroll-padding: 0 var(--gutter); scrollbar-width: none;
 }
 .songs__rail::-webkit-scrollbar { display: none; }
 .songs__rail .pcard { scroll-snap-align: start; }

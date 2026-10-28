@@ -115,7 +115,7 @@ The motion should feel like a camera and like light: slow eases, physical weight
 - Animate only `transform` and `opacity`. Keep `filter`, `box-shadow`, `clip-path` and `backdrop-filter` static. Changing them every frame causes repaints.
 - No scroll listeners that read layout every frame. Read once, cache, and use rAF.
 - `prefers-reduced-motion: reduce` turns off every camera move, parallax, tilt and auto-transition. The content must still be complete.
-- No autoplay audio, ever. Video autoplays only muted, only short ambient loops, and never on phones on cellular data if that can be avoided.
+- No autoplay audio, ever. Songs play only after the visitor presses "Play the songs" (then each postcard that comes to the front plays its clip). Video autoplays only muted, only short ambient loops, and never on phones on cellular data if that can be avoided.
 - ⚠️ **Don't use `loading="lazy"` inside a transformed camera** (the Journey world). The browser never sees those images scroll in, so they never load. This broke behind-the-stage photos on Oct 28, 2026.
 - Paper grain uses the tiny inline `feTurbulence` SVG data-URIs in `css/journey.css` (under 1KB, no request), kept at subtle opacity.
 

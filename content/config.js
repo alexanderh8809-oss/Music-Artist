@@ -14,17 +14,8 @@ window.SITE = {
     youtube: ""
   },
 
-  // Firebase (optional, but needed for the mailing list + analytics).
-  // Firebase console → Project settings → Your apps → Web app → "Config".
-  // Paste the values here. While apiKey is "", the mailing list form
-  // falls back to opening an email to contactEmail.
-  firebase: {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: ""
-  }
+  // Google Sheet backend: the "Web app URL" from backend/SETUP.md, step 4.
+  // It saves mailing-list emails and visitor analytics to your Google Sheet.
+  // While this is "", the Join form opens an email to contactEmail instead.
+  backend: ""
 };

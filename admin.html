@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Back office · Xander Hudson</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#131417">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..800&family=Homemade+Apple&family=Young+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* The back office: the building's ledger. Ink surface, bone text, verdigris data. */
+    body::after { display: none; }
+    .office { max-width: 1180px; margin: 0 auto; padding: 28px var(--gutter) 80px; }
+    .office__head { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; justify-content: space-between; margin-bottom: 26px; }
+    .office__head h1 { font-size: clamp(38px, 8vw, 64px); }
+    .office__head p { margin: 6px 0 0; color: var(--bone-dim); }
+    .ranges { display: flex; gap: 6px; }
+    .ranges button { min-height: 40px; padding: 0 14px; border-radius: 3px; border: 1.5px solid rgba(242,236,226,.25); background: none; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: var(--bone-dim); }
+    .ranges button[aria-pressed="true"] { border-color: var(--verdigris); color: var(--bone); background: rgba(43,184,163,.12); }
+    .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .tile { background: var(--ink-2); border: 1px solid rgba(242,236,226,.08); border-radius: 6px; padding: 16px 18px; }
+    .tile span { display: block; font-family: var(--f-label); font-stretch: 62%; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; color: var(--bone-dim); }
+    .tile b { display: block; margin-top: 6px; font-family: var(--f-head); font-weight: 400; font-size: 38px; line-height: 1; }
+    .tile small { display: block; margin-top: 6px; color: var(--bone-dim); font-size: 13px; }
+    .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .card { background: var(--ink-2); border: 1px solid rgba(242,236,226,.08); border-radius: 6px; padding: 18px 18px 16px; min-width: 0; }
+    .card--wide { grid-column: 1 / -1; }
+    .card h2 { font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 16px; color: var(--bone); margin: 0 0 2px; line-height: 1.2; }
+    .card > p { margin: 0 0 14px; color: var(--bone-dim); font-size: 14px; }
+    .empty { color: var(--bone-dim); font-size: 14px; padding: 8px 0; }
+
+    /* column chart: one series, one axis */
+    .cols { position: relative; height: 180px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; align-items: end; border-bottom: 1px solid rgba(242,236,226,.18); }
+    .cols button { position: relative; height: 100%; padding: 0; border: 0; background: none; display: flex; align-items: flex-end; }
+    .cols i { display: block; width: 100%; min-height: 0; background: var(--verdigris); border-radius: 4px 4px 0 0; }
+    .cols--orange i { background: var(--sunset); }
+    .cols button:hover i, .cols button:focus-visible i { filter: brightness(1.25); }
+    .cols__axis { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--bone-dim); }
+    .cols__max { position: absolute; left: 0; top: -2px; font-size: 12px; color: var(--bone-dim); border-top: 1px dashed rgba(242,236,226,.15); width: 100%; padding-top: 2px; pointer-events: none; }
+    .tip { position: fixed; z-index: 90; pointer-events: none; background: var(--bone); color: var(--ink); padding: 8px 10px; border-radius: 4px; font-size: 13px; line-height: 1.35; box-shadow: 0 6px 18px rgba(0,0,0,.4); transform: translate(-50%, calc(-100% - 10px)); white-space: nowrap; }
+    .tip b { font-weight: 700; }
+
+    /* bar lists */
+    .bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .bars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-size: 15px; }
+    .bars li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bars li b { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .bars li i { grid-column: 1 / -1; display: block; height: 6px; border-radius: 0 4px 4px 0; background: var(--verdigris); }
+    .bars li small { color: var(--bone-dim); font-weight: 400; margin-left: 6px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; color: var(--bone-dim); padding: 0 10px 8px 0; border-bottom: 1px solid rgba(242,236,226,.12); }
+    td { padding: 9px 10px 9px 0; border-bottom: 1px solid rgba(242,236,226,.06); vertical-align: top; }
+    .scroller { overflow-x: auto; max-height: 420px; }
+    .key { max-width: 460px; margin: 12vh auto 0; }
+    .key .field { margin-top: 18px; }
+    .key p { color: var(--bone-dim); }
+    .bar-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .note { color: var(--bone-dim); font-size: 13px; margin-top: 22px; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="./">Xander Hudson</a>
+    <nav class="site-nav" aria-label="Floors">
+      <a class="floor" href="./"><i>L</i>Lobby</a>
+      <a class="floor" href="admin.html" aria-current="page"><i>B</i>Back office</a>
+    </nav>
+  </header>
+
+  <main class="office" id="office"></main>
+
+  <script src="content/config.js"></script>
+  <script>
+  (function () {
+    const API = ((window.SITE || {}).backend || "").trim();
+    const root = document.getElementById("office");
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const fmt = (n) => Number(n || 0).toLocaleString("en-US");
+    const pct = (a, b) => (b ? Math.round((a / b) * 1000) / 10 + "%" : "–");
+    const get = (k) => { try { return localStorage.getItem(k) || ""; } catch { return ""; } };
+    const set = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+    let days = Number(get("xh_admin_days")) || 30;
+
+    function askKey(msg) {
+      root.innerHTML = `
+        <section class="key">
+          <span class="label">Back office</span>
+          <h1 style="font-size:44px;margin:8px 0 10px">Staff only.</h1>
+          <p>${msg || "Enter your admin key from the Google Sheet setup (backend/SETUP.md, step 3). It's saved in this browser only."}</p>
+          ${API ? "" : `<p style="color:var(--peach)">The Google Sheet isn't connected yet: <b>backend</b> in content/config.js is empty.</p>`}
+          <form class="field" id="keyform">
+            <label class="visually-hidden" for="k">Admin key</label>
+            <input id="k" type="password" autocomplete="current-password" placeholder="Admin key" required>
+            <button class="btn btn--hit" type="submit">Open the ledger</button>
+          </form>
+        </section>`;
+      document.getElementById("keyform").addEventListener("submit", (e) => {
+        e.preventDefault();
+        set("xh_admin_key", document.getElementById("k").value.trim());
+        load();
+      });
+    }
+
+    function load() {
+      const key = get("xh_admin_key");
+      if (!API || !key) return askKey();
+      root.innerHTML = `<p class="empty">Reading the ledger…</p>`;
+      fetch(`${API}?action=stats&days=${days}&key=${encodeURIComponent(key)}`)
+        .then((r) => r.json())
+        .then((d) => { if (!d.ok) return askKey("That key didn't open it. Check it and try again."); render(d); })
+        .catch(() => askKey("Couldn't reach the Google Sheet. Check the backend link in content/config.js."));
+    }
+
+    /* ---------- Pieces ---------- */
+    const tile = (label, value, sub) => `<div class="tile"><span>${label}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
+    function bars(list, opts = {}) {
+      if (!list || !list.length) return `<p class="empty">${opts.empty || "Nothing yet."}</p>`;
+      const top = list.slice(0, opts.limit || 8), max = top[0].value, total = list.reduce((s, x) => s + x.value, 0);
+      return `<ul class="bars">${top.map((x) => `
+        <li><span>${esc(opts.label ? opts.label(x.name) : x.name)}</span><b>${fmt(x.value)}<small>${pct(x.value, total)}</small></b>
+        <i style="width:${Math.max(2, (x.value / max) * 100)}%"></i></li>`).join("")}</ul>`;
+    }
+    function columns(daily, field, label, orange) {
+      const max = Math.max(1, ...daily.map((d) => d[field]));
+      const first = daily[0]?.date, last = daily[daily.length - 1]?.date;
+      return `<div class="cols${orange ? " cols--orange" : ""}" data-label="${label}">
+          <span class="cols__max">${fmt(max)}</span>
+          ${daily.map((d) => `<button type="button" data-tip="${esc(niceDate(d.date))}: <b>${fmt(d[field])}</b> ${label}" aria-label="${esc(niceDate(d.date))}: ${d[field]} ${label}">
+            <i style="height:${(d[field] / max) * 100}%"></i></button>`).join("")}
+        </div>
+        <div class="cols__axis"><span>${esc(niceDate(first))}</span><span>${esc(niceDate(last))}</span></div>`;
+    }
+    const niceDate = (s) => (s ? new Date(s + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "");
+    const when = (iso) => new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    const linkName = (n) => ({ spotify: "Spotify", tiktok: "TikTok", instagram: "Instagram", youtube: "YouTube", tickets: "Tickets" }[n] || (n.startsWith("buy_") ? "Buy: " + n.slice(4).replace(/-/g, " ") : n));
+    const pageName = (p) => ({ "index.html": "Lobby (home)", "journey.html": "Journey", "merch.html": "Postcards" }[p] || p);
+    const eventName = (e) => ({ visit: "Visited", outbound_click: "Clicked", join_list: "Joined the list", popup_shown: "Saw the pop-up", popup_dismiss: "Closed the pop-up", open_join: "Opened sign-up", song_play: "Played a song", postcard_flip: "Flipped a postcard", sound_on: "Turned sound on", journey_stage: "Journey stage", region_open: "Checked shows", rack_spin: "Spun the rack", scroll_depth: "Scrolled", leave: "Left after (sec)" }[e] || e);
+
+    function render(d) {
+      const t = d.totals;
+      const mins = t.medianSeconds ? (t.medianSeconds >= 60 ? Math.floor(t.medianSeconds / 60) + "m " + (t.medianSeconds % 60) + "s" : t.medianSeconds + "s") : "–";
+      root.innerHTML = `
+        <div class="office__head">
+          <div>
+            <span class="label">Back office · Basement</span>
+            <h1>The ledger.</h1>
+            <p>Last ${d.days} days · updated ${esc(when(d.generated))}</p>
+          </div>
+          <div class="bar-actions">
+            <div class="ranges" role="group" aria-label="Date range">
+              ${[7, 30, 90].map((n) => `<button type="button" data-days="${n}" aria-pressed="${n === d.days}">${n} days</button>`).join("")}
+            </div>
+            <a class="btn btn--sm" href="${esc(d.sheetUrl)}" target="_blank" rel="noopener">Open the Google Sheet</a>
+          </div>
+        </div>
+
+        <section class="tiles" aria-label="Totals">
+          ${tile("Visits", fmt(t.visits))}
+          ${tile("People", fmt(t.visitors), "different visitors")}
+          ${tile("New signups", fmt(t.signups), pct(t.signups, t.visitors) + " of people")}
+          ${tile("Mailing list", fmt(t.subscribersAllTime), "all time")}
+          ${tile("Spotify clicks", fmt(t.spotify))}
+          ${tile("TikTok clicks", fmt(t.tiktok))}
+          ${tile("Typical visit", mins, "median time on a page")}
+        </section>
+
+        <div class="grid">
+          <section class="card card--wide"><h2>Visits per day</h2><p>Hover or tap a day for the number.</p>${columns(d.daily, "visits", "visits")}</section>
+          <section class="card card--wide"><h2>New signups per day</h2><p>Emails added to the list.</p>${columns(d.daily, "signups", "signups", true)}</section>
+          <section class="card"><h2>Where they came from</h2><p>The app or site that sent them.</p>${bars(d.sources, { label: (n) => ({ direct: "Direct / typed it in", tiktok: "TikTok", instagram: "Instagram", spotify: "Spotify", youtube: "YouTube", x: "X / Twitter", google: "Google", facebook: "Facebook" }[n] || n) })}</section>
+          <section class="card"><h2>Where they are</h2><p>From their device's time zone.</p>${bars(d.places)}</section>
+          <section class="card"><h2>What they clicked</h2><p>Links that leave the site.</p>${bars(d.clicks, { label: linkName, empty: "No clicks yet." })}</section>
+          <section class="card"><h2>Pages</h2><p>Which floors get visited.</p>${bars(d.pages, { label: pageName })}</section>
+          <section class="card"><h2>Devices</h2><p>Phone, tablet or computer.</p>${bars(d.devices)}</section>
+          <section class="card"><h2>Pop-up</h2><p>The sign-up ticket that slides up on its own.</p>
+            <ul class="bars">
+              <li><span>Shown</span><b>${fmt(d.popup.shown)}</b></li>
+              <li><span>Joined from it</span><b>${fmt(d.popup.joined)}<small>${pct(d.popup.joined, d.popup.shown)}</small></b></li>
+              <li><span>Closed it</span><b>${fmt(d.popup.dismissed)}<small>${pct(d.popup.dismissed, d.popup.shown)}</small></b></li>
+            </ul></section>
+          <section class="card"><h2>Postcards</h2><p>Songs played and cards flipped.</p>${bars(d.postcards, { label: (n) => n.replace(/-/g, " "), empty: "No plays or flips yet." })}</section>
+          <section class="card"><h2>Journey</h2><p>How far each visit followed the string.</p>${bars(d.journey)}</section>
+          <section class="card"><h2>Referring sites</h2><p>Exact websites, when there is one.</p>${bars(d.referrers, { empty: "None yet: most visits come from apps or typed links." })}</section>
+          <section class="card"><h2>How far down they scroll</h2><p>Visits that reached each point of a page.</p>${bars(d.scroll, { limit: 12, label: (n) => n.replace(/^[^ ]+/, (p) => pageName(p)) })}</section>
+
+          <section class="card card--wide"><h2>Mailing list</h2><p>Newest first. The full list is in the Google Sheet.</p>
+            <div class="scroller">${d.subscribers.length ? `<table>
+              <thead><tr><th>Email</th><th>Joined</th><th>Came from</th><th>Where</th></tr></thead>
+              <tbody>${d.subscribers.map((s) => `<tr><td>${esc(s.email)}</td><td>${esc(when(s.time))}</td><td>${esc(s.source)}</td><td>${esc(s.how === "popup" ? "Pop-up" : "Join button")} · ${esc(pageName(s.page))}</td></tr>`).join("")}</tbody>
+            </table>` : `<p class="empty">No one yet. Share the link with ?utm_source=tiktok on the end so you can see which posts bring people in.</p>`}</div></section>
+
+          <section class="card card--wide"><h2>Latest activity</h2><p>The last 40 things visitors did.</p>
+            <div class="scroller">${d.recent.length ? `<table>
+              <thead><tr><th>When</th><th>What</th><th>Page</th><th>From</th><th>Where</th></tr></thead>
+              <tbody>${d.recent.map((r) => `<tr><td>${esc(when(r.time))}</td><td>${esc(eventName(r.event))}${r.detail ? ": " + esc(r.event === "outbound_click" ? linkName(r.detail) : r.detail) : ""}</td><td>${esc(pageName(r.page))}</td><td>${esc(r.source)}</td><td>${esc(r.place)}</td></tr>`).join("")}</tbody>
+            </table>` : `<p class="empty">Nothing yet.</p>`}</div></section>
+        </div>
+        <p class="note">Visits from this browser count too. <button class="btn btn--sm" type="button" id="logout">Forget my key</button></p>`;
+
+      root.querySelectorAll("[data-days]").forEach((b) => b.addEventListener("click", () => { days = +b.dataset.days; set("xh_admin_days", days); load(); }));
+      document.getElementById("logout").addEventListener("click", () => { set("xh_admin_key", ""); askKey(); });
+    }
+
+    /* tooltips for the day columns */
+    const tip = document.createElement("div");
+    tip.className = "tip"; tip.hidden = true; document.body.appendChild(tip);
+    const showTip = (b) => { const r = b.getBoundingClientRect(); tip.innerHTML = b.dataset.tip; tip.style.left = r.left + r.width / 2 + "px"; tip.style.top = r.top + "px"; tip.hidden = false; };
+    root.addEventListener("pointerover", (e) => { const b = e.target.closest("[data-tip]"); if (b) showTip(b); });
+    root.addEventListener("pointerout", (e) => { if (e.target.closest("[data-tip]")) tip.hidden = true; });
+    root.addEventListener("focusin", (e) => { const b = e.target.closest("[data-tip]"); if (b) showTip(b); });
+    root.addEventListener("focusout", () => (tip.hidden = true));
+
+    load();
+  })();
+  </script>
+</body>
+</html>
