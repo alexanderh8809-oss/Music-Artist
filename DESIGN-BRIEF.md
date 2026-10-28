@@ -17,7 +17,7 @@ Why this concept:
 - **Journey is the strongest page.** It already has a world: a corkboard, string, torn paper and photos that fade by age. Keep it and refine it.
 - **Home is the weakest.** A dark screen with a centered name and buttons is the template look. It has no photo of him and no object from his world above the fold.
 - **The colors are right and the contrast is good.** All main text pairs pass, and the orange button already uses dark text, which is correct.
-- **There are too many fonts: 5, and the brand allows 3.** Big Shoulders and Permanent Marker should go.
+- **Fonts were 5; the brand allows 3.** Done: now Young Serif, Homemade Apple and Archivo.
 - **The photos are heavy.** `MORETHANWORDS .png` is 1.9MB and `TikToks.png` is 1.3MB. Several JPGs are over 600KB. On phones, that's the main source of lag.
 
 ## The floors
@@ -32,7 +32,7 @@ Why this concept:
 
 ### Floor 1: Journey (`journey.html`)
 - Keep everything that's built.
-- Replace Permanent Marker with the script font, and Big Shoulders labels with Hanken Grotesk uppercase.
+- Done: the year is now in Young Serif, the notes and "to be continued" in Homemade Apple, and the labels in condensed Archivo.
 - **The ox appears at "to be continued…"**, holding the note. Clicking it opens the mailing list.
 - Compress all journey photos to 300KB or less.
 
@@ -88,3 +88,17 @@ Reduced motion turns all of it off, and the page still reads completely.
 - [Core Web Vitals thresholds](https://corewebvitals.io/core-web-vitals) · [Vision Australia: 60-30-10 and accessible palettes](https://visionaustralia.org/business-consulting/digital-access/Creating-accessible-digital-colour-palettes-60-30-10-design-rule)
 - [SVG noise vs image grain (120KB saved)](https://www.jeantinland.com/blog/120kb-less/) · [Charli XCX brat rollout (Billboard)](https://ca.billboard.com/music/pop/charli-xcx-brat-album-rollout-remix-strategy-1235854293) · [Awwwards: brat microsite](https://www.awwwards.com/sites/charli-xcx)
 - Contrast ratios were calculated from the site's actual color values with the WCAG 2.x formula.
+
+## Status (October 28, 2026)
+
+Built:
+- Phase 1: photos compressed (about 6.9 MB down to 2 MB, each under 300 KB) and fonts cut to 3.
+- Phase 2: the lobby hero with the studio photo, sunset sky, three skyline layers with water towers and lit windows, scroll and pointer depth, and the window reflection. Also the bio as a lyric sheet and the flip postcards.
+- Phase 3: the elevator floor buttons as the menu, door-opening page transitions (Chrome and Safari) and the 404 page.
+- Phase 4: the postcard spinner rack and the set in a paper sleeve.
+- Phase 5: shows as the X line, with stops, ticket stubs and an empty-stop ticket that offers Join.
+
+Still open:
+- Phase 6: ox moments, waiting on the artwork.
+- Phase 7: an optional WebGL sky.
+- Real postcard photos in `content/merch.js`.

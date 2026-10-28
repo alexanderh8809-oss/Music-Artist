@@ -1,6 +1,6 @@
-/* Postcard + tour-date cards, shared by the home page and the merch page. */
+/* Postcards and tour tickets, shared by the home page and the merch page. */
 (function () {
-  const { esc } = window.XH;
+  const { esc, paper } = window.XH;
   const S = window.SITE || {};
   const phClass = ["", "ph--b", "ph--c"];
 
@@ -10,29 +10,33 @@
     return `mailto:${S.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent("Shipping name and address:\n\n")}`;
   }
 
+  // A postcard: the photo on the front, a handwritten back with the price.
+  // Tap anywhere on it to flip; the Buy link on the back stays clickable.
   window.XH.postcard = function (item, i = 0) {
     const front = item.image
-      ? `<img src="${esc(item.image)}" alt="${esc(item.title)} postcard" loading="lazy">`
-      : `<div class="ph ${phClass[i % 3]}" aria-hidden="true"><span class="pc__ph-title">${esc(item.title)}</span></div>`;
-    const where = [item.place, item.date].filter(Boolean).map(esc).join(" · ");
+      ? `<img src="${esc(item.image)}" alt="" decoding="async">`
+      : `<div class="ph ${phClass[i % 3]}" aria-hidden="true"></div>`;
+    const where = [item.place, item.date].filter(Boolean).map(esc).join(", ");
+    const note = item.scrap || where || `${item.title}, from the first songs.`;
     return `
-      <article class="pc${item.featured ? " pc--featured" : ""}">
-        <div class="pc__front">
-          <span class="tape tape--plain pc__tape" aria-hidden="true"></span>
-          ${front}
-          <span class="pc__stamp" aria-hidden="true">${esc(item.number)}</span>
-        </div>
-        <div class="pc__meta">
-          <div>
-            <h3 class="pc__title">${esc(item.title)}</h3>
-            ${where ? `<p class="pc__where">${where}</p>` : ""}
-            ${item.scrap ? `<p class="scrap pc__scrap">${esc(item.scrap)}</p>` : ""}
+      <article class="pcard" data-id="${esc(item.id)}">
+        <div class="pcard__in">
+          <div class="pcard__face pcard__front paper" style="${paper(i * 11 + 3, "", 0)}">
+            ${front}
+            <h3 class="pcard__title">${esc(item.title)}</h3>
+            <span class="pcard__num" aria-hidden="true">${esc(item.number)}</span>
           </div>
-          <div class="pc__buy">
-            <span class="pc__price">$${Number(item.price).toFixed(0)}</span>
-            <a class="btn btn--sig btn--sm" href="${esc(buyHref(item))}" data-track="buy_${esc(item.id)}"${item.buy ? ' target="_blank" rel="noopener"' : ""}>Buy</a>
+          <div class="pcard__face pcard__back paper" style="${paper(i * 11 + 4, "", 0)}">
+            <p class="pcard__note">${esc(note)}</p>
+            <div class="pcard__to">
+              <span class="pcard__stamp" aria-hidden="true">NYC<br>${esc(item.number)}</span>
+              <span class="pcard__price">$${Number(item.price).toFixed(0)}</span>
+              <a class="btn btn--hit btn--sm pcard__buy" href="${esc(buyHref(item))}" data-track="buy_${esc(item.id)}"${item.buy ? ' target="_blank" rel="noopener"' : ""}>Buy</a>
+            </div>
+            <span class="pcard__postmark" aria-hidden="true">NEW YORK<br>N.Y.</span>
           </div>
         </div>
+        <button class="pcard__flip" type="button" aria-pressed="false" aria-label="Flip the ${esc(item.title)} postcard to see the back and price"></button>
       </article>`;
   };
 
@@ -41,15 +45,16 @@
     if (isNaN(dt)) return { m: "", day: esc(d) };
     return { m: dt.toLocaleString("en-US", { month: "short" }), day: dt.getDate(), y: dt.getFullYear() };
   };
-  window.XH.dateCard = function (show) {
+  // A show: a printed ticket
+  window.XH.dateCard = function (show, i = 0) {
     const f = fmt(show.date);
     return `
-      <article class="show">
-        <div class="show__date"><span>${esc(f.m)}</span><strong>${esc(f.day)}</strong><span>${esc(f.y || "")}</span></div>
-        <div class="show__info">
+      <article class="ticket-stub paper" style="${paper(i * 13 + 40, "lr", 1.2)}">
+        <div class="ticket-stub__date"><span>${esc(f.m)}</span><strong>${esc(f.day)}</strong><span>${esc(f.y || "")}</span></div>
+        <div>
           <h3>${esc(show.city)}</h3>
           <p>${esc(show.venue || "")}</p>
-          ${show.tickets ? `<a class="btn btn--sig btn--sm" href="${esc(show.tickets)}" target="_blank" rel="noopener" data-track="tickets">Tickets</a>` : `<span class="label">Tickets soon</span>`}
+          ${show.tickets ? `<a class="btn btn--hit btn--sm" href="${esc(show.tickets)}" target="_blank" rel="noopener" data-track="tickets">Tickets</a>` : `<span class="label">Tickets soon</span>`}
         </div>
       </article>`;
   };

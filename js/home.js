@@ -1,111 +1,103 @@
-/* Home page: continent slivers → swipeable rail of tour dates + merch. */
+/* Lobby: the skyline, its depth on scroll, the bio reveal, song postcards
+   and the subway line of shows. */
 (function () {
-  const { $, esc } = window.XH;
-  const regions = window.TOUR || [];
-  const merch = window.MERCH || [];
-  const svg = $(".fan__svg");
-  const fan = $(".fan");
-  const NS = "http://www.w3.org/2000/svg";
+  const { $, esc, rng, paper } = window.XH;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Sunset-after-dark gradients (supporting colors only; orange stays out)
-  const skies = [
-    ["#eac392", "#7b6690"], ["#3b6fb6", "#131417"], ["#7b6690", "#1c1e23"],
-    ["#2bb8a3", "#3b6fb6"], ["#eac392", "#3b6fb6"], ["#7b6690", "#eac392"]
-  ];
-
-  const apex = { x: 300, y: 540 }, R = 720, span = 118, gap = 1.8;
-  const each = (span - gap * (regions.length - 1)) / regions.length;
-  const pt = (deg, r) => {
-    const a = (deg * Math.PI) / 180;
-    return [apex.x + Math.sin(a) * r, apex.y - Math.cos(a) * r];
-  };
-
-  let defs = `<defs>`;
-  let body = "";
-  regions.forEach((reg, i) => {
-    const a0 = -span / 2 + i * (each + gap), a1 = a0 + each, mid = (a0 + a1) / 2;
-    const [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R);
-    const d = `M${apex.x},${apex.y} L${x0.toFixed(1)},${y0.toFixed(1)} L${x1.toFixed(1)},${y1.toFixed(1)} Z`;
-    const [c0, c1] = skies[i % skies.length];
-    defs += `<linearGradient id="sky${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c0}"/><stop offset="1" stop-color="${c1}"/></linearGradient>`;
-    let fill = `<path class="sliver__shape" d="${d}" fill="url(#sky${i})"/>`;
-    if (reg.image) {
-      defs += `<clipPath id="clip${i}"><path d="${d}"/></clipPath>`;
-      fill = `<image href="${esc(reg.image)}" x="0" y="0" width="600" height="560" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip${i})"/>` +
-             `<path class="sliver__shape" d="${d}" fill="transparent"/>`;
+  /* ---------- Skyline: three layers of New York, drawn once ---------- */
+  // Rooftops with water towers in front, one stepped spire behind, a few lit windows
+  function skyline(svg, seed, { towers = 0, spire = false, windows = 0 }) {
+    const r = rng(seed), W = 1200, H = 300;
+    let x = 0, out = "", lit = "";
+    while (x < W) {
+      const w = 34 + r() * 70, h = 70 + r() * 190, top = H - h;
+      out += `<rect x="${x.toFixed(0)}" y="${top.toFixed(0)}" width="${(w + 1).toFixed(0)}" height="${h.toFixed(0)}"/>`;
+      if (r() < 0.3) out += `<rect x="${(x + w * 0.2).toFixed(0)}" y="${(top - 14).toFixed(0)}" width="${(w * 0.6).toFixed(0)}" height="15"/>`;
+      if (towers && r() < towers) { // water tower: tank, cone, legs
+        const tx = x + w * (0.25 + r() * 0.4), ty = top;
+        out += `<rect x="${tx - 9}" y="${ty - 30}" width="18" height="22" rx="2"/><path d="M${tx - 11} ${ty - 30} L${tx} ${ty - 42} L${tx + 11} ${ty - 30}Z"/>` +
+               `<rect x="${tx - 8}" y="${ty - 9}" width="2" height="9"/><rect x="${tx + 6}" y="${ty - 9}" width="2" height="9"/>`;
+      }
+      for (let k = 0; k < windows; k++) if (r() < 0.5) {
+        lit += `<rect class="lit" x="${(x + 6 + r() * (w - 14)).toFixed(0)}" y="${(top + 12 + r() * (h - 30)).toFixed(0)}" width="4" height="6"/>`;
+      }
+      x += w;
     }
-    const [tx, ty] = pt(mid, 300);
-    body += `
-      <g class="sliver" data-i="${i}" role="button" tabindex="0" aria-label="${esc(reg.name)}" aria-controls="region">
-        ${fill}
-        <text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" dominant-baseline="middle"
-              transform="rotate(${(mid - 90).toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)})">${esc(reg.name)}</text>
-      </g>`;
-  });
-  svg.innerHTML = defs + `</defs>` + body;
-
-  /* ---------- Region panel ---------- */
-  const panel = $("#region"), rail = $(".rail", panel), nameEl = $(".region__name", panel);
-
-  function inRegion(item, id) {
-    const r = item.regions || ["all"];
-    return r.includes("all") || r.includes(id);
+    if (spire) { // a stepped, Empire-ish tower
+      const c = W * 0.62;
+      out += `<path d="M${c - 46} ${H} V120 H${c - 30} V82 H${c - 16} V48 H${c - 6} V8 H${c + 6} V48 H${c + 16} V82 H${c + 30} V120 H${c + 46} V${H}Z"/>`;
+    }
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = out + lit;
   }
+  skyline($(".skyline--far"), 11, { spire: true });
+  skyline($(".skyline--mid"), 23, { windows: 3 });
+  skyline($(".skyline--near"), 37, { towers: 0.35, windows: 1 });
 
-  function open(i) {
-    const reg = regions[i];
-    svg.querySelectorAll(".sliver").forEach((g) => {
-      const on = +g.dataset.i === i;
-      g.classList.toggle("is-on", on);
-      g.setAttribute("aria-pressed", on);
+  /* ---------- Depth: layers drift apart as you scroll; photo tilts with the pointer ---------- */
+  const hero = $(".hero");
+  const layers = [
+    [".hero__sun", 0.05], [".skyline--far", 0.1], [".skyline--mid", 0.2],
+    [".hero__photo", 0.12], [".hero__reflection", 0.3], [".skyline--near", 0.34]
+  ].map(([s, k]) => [$(s), k]);
+  let px = 0, py = 0, raf = 0, visible = true;
+  function paint() {
+    raf = 0;
+    const y = scrollY;
+    layers.forEach(([el, k]) => {
+      el.style.transform = `translate3d(${(px * k * 40).toFixed(1)}px, ${(y * k + py * k * 20).toFixed(1)}px, 0)`;
     });
-    fan.classList.add("has-pick");
-    nameEl.textContent = reg.name;
-
-    const upcoming = (reg.dates || []).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
-    let html = upcoming.length
-      ? upcoming.map(window.XH.dateCard).join("")
-      : `<div class="empty">
-           <span class="label">No dates yet</span>
-           <h3>Not in ${esc(reg.name)} yet.</h3>
-           <p>Join the list and you'll hear first when a show lands near you.</p>
-           <a class="btn btn--sig btn--sm" href="#join" data-join>Tell me first</a>
-         </div>`;
-    const items = merch.filter((m) => inRegion(m, reg.id));
-    if (items.length) html += `<span class="label rail__sub">Merch</span>` + items.map((m, k) => window.XH.postcard(m, k)).join("");
-    rail.innerHTML = html;
-    rail.scrollLeft = 0;
-
-    const firstOpen = panel.hidden;
-    panel.hidden = false;
-    if (firstOpen) panel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
-    window.XH.track("pick_region", { region: reg.id });
+  }
+  const ask = () => { if (visible && !raf) raf = requestAnimationFrame(paint); };
+  if (!reduced) {
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(hero);
+    addEventListener("scroll", ask, { passive: true });
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      hero.addEventListener("pointermove", (e) => {
+        px = e.clientX / innerWidth - 0.5; py = e.clientY / innerHeight - 0.5; ask();
+      });
+      hero.addEventListener("pointerleave", () => { px = py = 0; ask(); });
+    }
   }
 
-  svg.addEventListener("click", (e) => {
-    const g = e.target.closest(".sliver");
-    if (g) open(+g.dataset.i);
-  });
-  svg.addEventListener("keydown", (e) => {
-    const g = e.target.closest(".sliver");
-    if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); open(+g.dataset.i); }
-  });
+  /* ---------- Bio: the lines arrive one after another ---------- */
+  const sheet = $(".reveal");
+  $(".sheet").style.cssText += paper(5, "tb", 1.6);
+  if (sheet && "IntersectionObserver" in window && !reduced) {
+    sheet.classList.add("reveal--armed");
+    new IntersectionObserver((entries, io) => {
+      if (entries[0].isIntersecting) { sheet.classList.add("in"); io.disconnect(); }
+    }, { threshold: 0.35 }).observe(sheet);
+  }
 
-  panel.querySelectorAll(".region__arrow").forEach((b) =>
-    b.addEventListener("click", () => {
-      const card = rail.firstElementChild;
-      const step = card ? card.getBoundingClientRect().width + 16 : 300;
-      rail.scrollBy({ left: step * +b.dataset.dir, behavior: "smooth" });
-    })
-  );
-})();
+  /* ---------- Song postcards ---------- */
+  const songs = (window.MERCH || []).filter((m) => !m.featured);
+  $(".songs__rail").innerHTML = songs.map((m, i) => window.XH.postcard(m, i)).join("");
 
-/* Bio: fade the sentences in when it scrolls into view */
-(function () {
-  const bio = document.querySelector(".reveal");
-  if (!bio || !("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  bio.classList.add("reveal--armed");
-  new IntersectionObserver((entries, io) => {
-    if (entries[0].isIntersecting) { bio.classList.add("in"); io.disconnect(); }
-  }, { threshold: 0.35 }).observe(bio);
+  /* ---------- Shows: one stop per continent ---------- */
+  const regions = window.TOUR || [];
+  const line = $(".line"), panel = $("#stop-panel");
+  line.innerHTML = regions.map((reg, i) => {
+    const n = (reg.dates || []).length;
+    return `<li><button type="button" data-i="${i}" aria-expanded="false" aria-controls="stop-panel">
+      <i aria-hidden="true"></i>${esc(reg.name)}<small>${n ? `${n} show${n > 1 ? "s" : ""}` : "No dates yet"}</small></button></li>`;
+  }).join("");
+  line.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+    const open = b.getAttribute("aria-expanded") === "true";
+    line.querySelectorAll("button").forEach((x) => x.setAttribute("aria-expanded", "false"));
+    if (open) { panel.innerHTML = ""; return; }
+    b.setAttribute("aria-expanded", "true");
+    const reg = regions[+b.dataset.i], dates = reg.dates || [];
+    panel.innerHTML = dates.length
+      ? dates.map((d, i) => window.XH.dateCard(d, i)).join("")
+      : `<article class="stub-empty paper" style="${paper(+b.dataset.i + 60, "lr", 1.2)}">
+          <span class="label">Stop: ${esc(reg.name)}</span>
+          <h3>Not in ${esc(reg.name)} yet.</h3>
+          <p>Join the list and you'll hear first when a show lands here.</p>
+          <a class="btn btn--hit btn--sm" href="#join" data-join>Join the list</a>
+        </article>`;
+    window.XH.track("region_open", { region: reg.id });
+  });
 })();

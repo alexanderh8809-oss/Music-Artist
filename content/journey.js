@@ -61,7 +61,7 @@ window.JOURNEY = [
       },
       {
         "type": "photo",
-        "src": "images/journey/MORETHANWORDS .png"
+        "src": "images/journey/MORETHANWORDS.jpg"
       },
       {
         "type": "news",

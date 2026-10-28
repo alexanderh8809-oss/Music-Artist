@@ -70,16 +70,16 @@ The brand allows **3 fonts max**:
 
 | Role | Font | Use |
 |---|---|---|
-| Display serif | **Gloock** | Wordmark, headings, newspaper headlines |
-| Script accent | **Nothing You Could Do** | Lyric lines, captions, handwritten notes. Never a headline. |
-| Grotesque | **Hanken Grotesk** | Body, buttons, labels (uppercase with .14em tracking for labels) |
+| Display serif | **Young Serif** | Wordmark, headings, newspaper headlines and body, prices. Heavy, warm, literary, and not one of the overused "AI site" serifs (Instrument Serif, Fraunces, Playfair). |
+| Script accent | **Homemade Apple** | Real pen handwriting for lyric lines, captions, postcard backs and notes. Never a headline. It runs large and tall: size it about 0.7× what you would expect, with line-height 1.7 or more. |
+| Grotesque | **Archivo** (variable width) | Body text at normal width. Labels, buttons, tickets and the subway line at `font-stretch: 62%`, uppercase, .12–.16em tracking. That one family covers both jobs. |
 
-The site currently also loads Big Shoulders Display (labels) and Permanent Marker (Journey years and notes). That makes 5 fonts. DESIGN-BRIEF.md plans to fold them into the 3 above.
+Chosen on Oct 28, 2026 after a side-by-side test against DM Serif Display, Bodoni Moda, Rozha One, Gloock, Mrs Saint Delafield, La Belle Aurore and Nothing You Could Do. One Google Fonts request loads all three.
 
 - The display sizes are big and tight: `clamp(44px, 12vw, 128px)`, line-height .9–.95, slight negative tracking.
 - Body text: 16–18px, line-height 1.5–1.6, at most 65 characters per line.
 - A script line appears **at most once per screen**.
-- Load only the weights you use, with `display=swap`. Preload the Gloock file used in the hero.
+- Load only the weights you use, with `display=swap`. Preload the hero photo, not fonts.
 
 ---
 

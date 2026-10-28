@@ -3,7 +3,7 @@
    each stage. Edit mode (journey.html?edit): type into the boxes, then
    download journey.js. */
 (function () {
-  const { $, esc } = window.XH;
+  const { $, esc, rng, paper } = window.XH;
   const editing = new URLSearchParams(location.search).has("edit");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const DRAFT = "xh_journey_draft2";
@@ -33,37 +33,6 @@
     return tag === "p" ? `<p class="${cls} empty-box">${ph}</p>` : `<${tag} class="${cls}"><span class="empty-box">${ph}</span></${tag}>`;
   }
 
-  // Torn paper edges: a ragged clip-path, the same every visit for the same piece
-  function rng(seed) {
-    return () => {
-      seed = (seed + 0x6d2b79f5) | 0;
-      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-  function tear(seed, edges, amp = 1.6) {
-    const r = rng(seed * 7919 + 17), pts = [];
-    const side = (e, n, at) => {
-      let d = amp / 2;
-      for (let k = 0; k < n; k++) {
-        if (!edges.includes(e)) { pts.push(at(k / n, -6)); continue; }
-        d = Math.max(0, Math.min(amp * 1.6, d * 0.45 + r() * amp * (r() < 0.12 ? 2.4 : 1)));
-        pts.push(at(k / n, d));
-      }
-    };
-    side("t", 26, (s, d) => [s * 100, d]);
-    side("r", 34, (s, d) => [100 - d, s * 100]);
-    side("b", 26, (s, d) => [100 - s * 100, 100 - d]);
-    side("l", 34, (s, d) => [d, 100 - s * 100]);
-    return `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}% ${y.toFixed(1)}%`).join(",")})`;
-  }
-  // the outline plus a coffee ring in a different spot on some pieces
-  const paper = (seed, edges, amp) => {
-    const r = rng(seed * 31 + 5);
-    const ring = r() < 0.45 ? `--stain-at:${Math.round(r() * 100)}% ${Math.round(r() * 100)}%;` : "--stain-size:0 0;";
-    return `--tear:${tear(seed, edges, amp)};${ring}`;
-  };
   const tape = (seed) => { const r = rng(seed); return `<span class="tp" style="left:${20 + r() * 50}%;--r:${(r() * 16 - 8).toFixed(1)}deg"></span>`; };
 
   // Decorative paper drawn in CSS: one per stage, alongside your own scraps
