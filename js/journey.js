@@ -99,7 +99,7 @@
       return `<div class="scrap news paper" data-sk="${k}" style="${pos}${paper(seed, "trbl", 2)}">
         <small><span>New York</span><span>${esc(st.year || "")}</span></small>${fake}${head}${body}${lines}${k % 2 ? "" : tape(seed)}</div>`;
     }
-    const pic = s.src ? `<img src="${esc(s.src)}" alt="" loading="lazy">` : `<div class="ph" aria-hidden="true">Photo</div>`;
+    const pic = s.src ? `<img src="${esc(s.src)}" alt="" decoding="async">` : `<div class="ph" aria-hidden="true">Photo</div>`;
     return `<figure class="scrap print paper" data-sk="${k}" style="${pos}${paper(seed, k % 2 ? "b" : "r", 1.4)}">${pic}${tape(seed + 1)}</figure>`;
   }
 
@@ -146,10 +146,10 @@
     if (!v) return `<div class="ph ph--c" aria-hidden="true">Video</div>`;
     const id = ytId(v);
     if (id) return `<button class="yt" type="button" data-yt="${id}" aria-label="Play video${st.title ? ": " + esc(st.title) : ""}">
-        <img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span class="yt__play" aria-hidden="true">&#9654;</span></button>`;
+        <img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" decoding="async"><span class="yt__play" aria-hidden="true">&#9654;</span></button>`;
     return `<video src="${esc(v)}" controls preload="metadata" playsinline></video>`;
   }
-  const img = (src, alt) => src ? `<img src="${esc(src)}" alt="${esc(alt || "Journey photo")}" loading="lazy">` : `<div class="ph" aria-hidden="true">Photo</div>`;
+  const img = (src, alt) => src ? `<img src="${esc(src)}" alt="${esc(alt || "Journey photo")}" decoding="async">` : `<div class="ph" aria-hidden="true">Photo</div>`;
 
   function tools(st, i) {
     if (!editing) return "";
