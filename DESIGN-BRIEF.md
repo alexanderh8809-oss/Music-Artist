@@ -33,6 +33,7 @@ Why this concept:
 ### Floor 1: Journey (`journey.html`)
 - Keep everything that's built.
 - Done: the year is now in Young Serif, the notes and "to be continued" in Homemade Apple, and the labels in condensed Archivo.
+- Done (stage 2): the years run down the left like a lift shaft, with his age under each and the current one lit; tap one to jump there. The front-page newspaper is his to write (headline, standfirst and a two-column story, in `?edit`). Hovering any photo lifts it off the board at full size; on phones, tap it.
 - **The ox appears at "to be continued…"**, holding the note. Clicking it opens the mailing list.
 - Compress all journey photos to 300KB or less.
 

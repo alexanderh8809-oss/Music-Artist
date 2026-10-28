@@ -22,8 +22,16 @@
   const bgsEl = $(".bgs");
   const cam = $(".cam"), boardEl = $(".board"), world = $(".world"), track = $(".track");
   const counter = $(".ctl__count"), prevBtn = $(".ctl--prev"), nextBtn = $(".ctl--next");
+  const rail = $(".rail");
   const pad = (n) => String(n).padStart(2, "0");
   const tilts = [-3, 2.5, -1.5, 3.2, -2.2];
+
+  // Age at a stage: typed in, or worked out from the birth year
+  function ageOf(st) {
+    if (String(st.age || "").trim()) return String(st.age).trim();
+    const y = String(st.year || "").match(/\b(19|20)\d{2}\b/), b = parseInt(board.born, 10);
+    return y && b ? String(+y[0] - b) : "";
+  }
 
   /* ---------- Pieces ---------- */
   // A text box: editable in edit mode, a dashed empty box in view mode until filled in
@@ -75,7 +83,7 @@
   // Where scraps sit around a stage, in --u: x, y, width, tilt. Mirrored on flipped stages.
   const slots = {
     news:  [[42, -15, 62, 4], [-28, 64, 56, -6], [58, 100, 54, 5], [-20, -22, 48, -3]],
-    photo: [[-24, -6, 40, -9], [76, 56, 40, 8], [-12, 122, 38, 6], [86, -12, 34, -5]],
+    photo: [[82, -16, 38, 6], [-30, 36, 38, -8], [78, 98, 38, 7], [-12, 124, 36, -5]],
     deco: [72, 136, 40, -4]
   };
   const place = ([x, y, w, r], flip, bump = 0) =>
@@ -84,8 +92,11 @@
   function scraps(st, i) {
     const flip = i % 2 === 1, seen = { news: 0, photo: 0 };
     const list = st.scraps.length ? st.scraps : [{ type: "news", headline: "", text: "" }];
+    // real photos take the slots that peek out furthest; empty frames go behind
+    const rank = new Map(list.map((s, k) => [k, s]).filter(([, s]) => s.type === "photo")
+      .sort(([a, x], [b, y]) => (!x.src - !y.src) || a - b).map(([k], n) => [k, n]));
     const own = list.map((s, k) => {
-      const n = seen[s.type]++, set = slots[s.type];
+      const n = s.type === "photo" ? rank.get(k) : seen[s.type]++, set = slots[s.type];
       return scrapHTML(s, st, i, k, place(set[n % set.length], flip, Math.floor(n / set.length) * 34));
     }).join("");
     const kinds = ["ticket", "cal", "receipt"];
@@ -130,6 +141,7 @@
           <option value="video"${st.kind === "video" ? " selected" : ""}>Video (bigger moment)</option>
         </select></label>
       ${st.kind === "video" ? `<label>Video <input data-tool="video" value="${esc(st.video || "")}" placeholder="YouTube link or images/journey/clip.mp4"></label>` : ""}
+      <label>Age at this stage <input data-tool="age" value="${esc(st.age || "")}" placeholder="${board.born && ageOf({ year: st.year }) ? "worked out: " + ageOf({ year: st.year }) : "e.g. 8, or set your birth year at the top"}"></label>
       <label>Photo 1 <input data-tool="photo0" value="${esc(p[0] || "")}" placeholder="images/journey/photo.jpg"></label>
       <label>Photo 2 <input data-tool="photo1" value="${esc(p[1] || "")}" placeholder="optional"></label>
       <label>Background: a photo of you at this age, fills the wall <input data-tool="background" value="${esc(st.background || "")}" placeholder="images/journey/board/age-10.jpg"></label>
@@ -161,8 +173,9 @@
       ${editing ? "" : scraps(st, i)}
       ${main}${small}${marker}
       <div class="note paper" style="${paper(i + 700, "t", 2.2)}">
-        <p class="note__label">Stage ${pad(i + 1)}</p>
-        ${box("p", "note__year", "year", st.year, "Year")}
+        ${editing
+          ? `<p class="note__label">Stage ${pad(i + 1)}</p>${box("p", "note__year", "year", st.year, "Year")}`
+          : `<p class="note__label"><span>Stage ${pad(i + 1)}</span>${st.year ? `<span>${esc(st.year)}</span>` : ""}${ageOf(st) ? `<span>Age ${esc(ageOf(st))}</span>` : ""}</p>`}
         ${box("p", "note__text", "text", st.text, "Write about this stage.")}
       </div>
       ${editing ? behind(st, i) : ""}
@@ -170,14 +183,29 @@
     </article>`;
   }
 
-  const intro = `<section class="stop" data-stop="intro">
+  // The front page: its headline, standfirst and lead story are his to write
+  function bField(tag, cls, key, val, ph) {
+    if (editing) return `<${tag} class="${cls}" contenteditable="plaintext-only" data-bf="${key}" data-ph="${ph}">${esc(val)}</${tag}>`;
+    return val ? `<${tag} class="${cls}">${esc(val)}</${tag}>` : "";
+  }
+  const masthead = () => {
+    const first = stages.find((s) => /\d{4}/.test(s.year || "")), last = [...stages].reverse().find((s) => /\d{4}/.test(s.year || ""));
+    const span = first && last ? `${first.year.match(/\d{4}/)[0]}–${last.year.match(/\d{4}/)[0]}` : "New York";
+    return `<div class="masthead paper" style="${paper(901, "b", 2.6)}"><span class="pin"></span>
+        <small><span>Vol. I</span><span>New York</span><span>${esc(span)}</span></small>
+        ${editing ? bField("h1", "masthead__title", "title", board.title, "The Journey") : `<h1 class="masthead__title">${esc(board.title || "The Journey")}</h1>`}
+        ${editing ? bField("p", "masthead__deck", "deck", board.deck, "One line under the headline") : `<p class="masthead__deck">${esc(board.deck || "Follow the string. Scroll, or press the button.")}</p>`}
+        <div class="masthead__story">
+          <p class="masthead__by">By Xander Hudson</p>
+          ${editing ? bField("p", "masthead__text", "text", board.text, "What the journey means to you. This is the front-page story.")
+            : board.text ? `<p class="masthead__text">${esc(board.text)}</p>` : `<i class="masthead__lines"></i>`}
+        </div>
+        <p class="masthead__jump">Story continues along the string <span aria-hidden="true">&rarr;</span></p>
+      </div>`;
+  };
+  const intro = () => `<section class="stop" data-stop="intro">
       <div class="scrap" style="${place([44, -18, 50, 6], false)}">${drawn("cal", {}, 0)}</div>
-      <div class="masthead paper" style="${paper(901, "b", 2.6)}"><span class="pin"></span>
-        <small><span>Vol. I</span><span>New York</span></small>
-        <h1>The Journey</h1>
-        <p>Follow the string. Scroll, or press the button.</p>
-        <i></i>
-      </div>
+      ${masthead()}
     </section>`;
   const outro = `<section class="stop" data-stop="outro">
       <div class="scrap" style="${place([-14, 52, 50, -7], false)}">${drawn("ticket", {}, 8)}</div>
@@ -186,10 +214,12 @@
         <a class="btn btn--sig" href="#join" data-join>Get the next chapter first</a>
       </div>
     </section>`;
-  const editIntro = () => `<section class="stop">
+  const editIntro = () => `<section class="stop" data-stop="intro">
+      ${masthead()}
       <div class="tools">
         <h3>Edit your journey</h3>
-        <p>Type into the dashed boxes. For pictures, upload them to <b>images/journey/</b> on GitHub (or send them to Claude) and type the path, like <b>images/journey/first-show.jpg</b>. When you're done, press <b>Download journey.js</b>. Your edits stay in this browser until then.</p>
+        <p>The newspaper above is the first thing people see: type your own headline and what the journey means to you. Then type into the dashed boxes on each stage. For pictures, upload them to <b>images/journey/</b> on GitHub (or send them to Claude) and type the path, like <b>images/journey/first-show.jpg</b>. When you're done, press <b>Download journey.js</b>. Your edits stay in this browser until then.</p>
+        <label>Birth year: works out your age at each stage for the years down the left <input data-board="born" value="${esc(board.born || "")}" inputmode="numeric" placeholder="e.g. 2008"></label>
         <label>Wall for the start and end, and any stage without its own background <input data-board="background" value="${esc(board.background || "")}" placeholder="images/journey/board/bookshelf.jpg"></label>
       </div>
     </section>`;
@@ -210,8 +240,9 @@
       ? `<div class="bg" style="background-image:url(&quot;${esc(encodeURI(s.background))}&quot;)"></div>` : "<i></i>").join("");
     bgs = [null, ...bgsEl.children].map((el) => (el && el.tagName === "DIV" ? el : null));
     const body = stages.map(stageHTML).join("");
-    world.innerHTML = editing ? editIntro() + body : `<svg class="string" aria-hidden="true"></svg>` + intro + body + outro;
+    world.innerHTML = editing ? editIntro() + body : `<svg class="string" aria-hidden="true"></svg>` + intro() + body + outro;
     els = [...world.querySelectorAll(".stop")];
+    renderRail();
     if (editing) {
       world.style.setProperty("--u", Math.min(440, cam.clientWidth * 0.84) / 100 + "px");
     } else {
@@ -220,11 +251,38 @@
     }
   }
 
+  /* ---------- The years down the left, with his age at each ---------- */
+  let railItems = [], railFill = null, railL = 0;
+  function renderRail() {
+    if (editing || !rail) return;
+    const n = stages.length;
+    rail.innerHTML = `<i class="rail__line"><b class="rail__fill"></b></i><ol>${stages.map((st, k) => {
+      const age = ageOf(st), at = n > 1 ? (k / (n - 1)) * 100 : 0;
+      const label = st.year ? `${st.year}${age ? ", age " + age : ""}` : `Stage ${k + 1}`;
+      return `<li style="top:${at.toFixed(2)}%"${st.year ? "" : ` class="is-blank"`}>
+        <button type="button" data-go="${k + 1}" aria-label="Go to ${esc(label)}">
+          <b>${st.year ? esc(st.year) : ""}</b>${age ? `<span>Age ${esc(age)}</span>` : ""}
+        </button></li>`;
+    }).join("")}</ol>`;
+    railItems = [...rail.querySelectorAll("li")];
+    railFill = $(".rail__fill", rail);
+  }
+  function lightRail(idx, p) {
+    if (!railFill) return;
+    const n = stages.length;
+    railFill.style.transform = `scaleY(${n > 1 ? Math.max(0, Math.min(1, (p - 1) / (n - 1))) : 0})`;
+    railItems.forEach((li, k) => {
+      li.classList.toggle("is-on", k === idx - 1);
+      li.classList.toggle("is-past", k < idx - 1);
+    });
+  }
+
   /* ---------- Board layout ---------- */
   const availH = () => cam.clientHeight - 84; // room for the controls
 
   function layout() {
-    const vw = cam.clientWidth;
+    railL = rail && !editing ? rail.getBoundingClientRect().right : 0; // the stages centre in the room right of the years
+    const vw = cam.clientWidth - railL;
     const C = Math.min(440, vw * 0.8);
     world.style.setProperty("--u", C / 100 + "px");
     world.style.transform = "none";
@@ -279,7 +337,7 @@
     const dip = reduced ? 0 : Math.sin(Math.PI * f) * 0.16; // drift back a little between stages
     const s = lerp(frames[i], frames[Math.min(i + 1, last)], e) * (1 - dip);
     const cx = lerp(A.cx, B.cx, e), cy = lerp(A.cy, B.cy, e);
-    return { s, p, tx: cam.clientWidth / 2 - s * cx, ty: availH() / 2 - s * cy + 8 };
+    return { s, p, tx: railL + (cam.clientWidth - railL) / 2 - s * cx, ty: availH() / 2 - s * cy + 8 };
   }
 
   function apply(t) {
@@ -315,6 +373,8 @@
     else if (!raf) raf = requestAnimationFrame(tick);
 
     const idx = Math.max(0, Math.min(els.length - 1, Math.round(p))), last = els.length - 1;
+    lightRail(idx, p);
+    if (lifted) dropLift();
     if (idx !== shown) {
       shown = idx;
       counter.textContent = idx === 0 ? "Start" : idx === last ? "End" : `${pad(idx)} / ${pad(stages.length)}`;
@@ -329,6 +389,7 @@
     addEventListener("scroll", onScroll, { passive: true });
     nextBtn.addEventListener("click", () => goTo(shown + 1));
     prevBtn.addEventListener("click", () => goTo(shown - 1));
+    rail && rail.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b) goTo(+b.dataset.go); });
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     scrollTo(0, 0);
     let rt;
@@ -358,6 +419,83 @@
     b.replaceWith(f);
   });
 
+  /* ---------- Photo lift: hover a photo (or tap it on a phone) and it comes off the board ---------- */
+  const PHOTOS = ".print > img, .polaroid > img";
+  const canHover = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  let lift = null, lifted = null, liftT = 0;
+  function liftEl() {
+    if (lift) return lift;
+    lift = document.createElement("div");
+    lift.className = "lift";
+    lift.hidden = true;
+    lift.innerHTML = `<figure class="lift__card"><img alt=""><figcaption></figcaption></figure>`;
+    document.body.appendChild(lift);
+    lift.addEventListener("click", () => dropLift());
+    return lift;
+  }
+  function raiseLift(im, pinned) {
+    clearTimeout(liftT);
+    if (lifted === im) return;
+    const el = liftEl(), card = el.firstElementChild, pic = card.firstElementChild;
+    const r = im.getBoundingClientRect();
+    const ar = im.naturalWidth && im.naturalHeight ? im.naturalWidth / im.naturalHeight : 0.8;
+    const top = cam.getBoundingClientRect().top + 12, bottom = innerHeight - 92, left = (pinned ? 0 : railL) + 12, right = innerWidth - 12;
+    const padX = 14, padB = 46; // the white border of the print
+    let ih = Math.min((bottom - top) * 0.88, 640) - padX - padB, iw = ih * ar;
+    if (iw > (right - left) * 0.9 - padX * 2) { iw = (right - left) * 0.9 - padX * 2; ih = iw / ar; }
+    const w = iw + padX * 2, h = ih + padX + padB;
+    // pinned (tap): the middle of the room; hover: right over the photo, kept on screen
+    const cx = pinned ? (left + right) / 2 : Math.max(left + w / 2, Math.min(right - w / 2, r.left + r.width / 2));
+    const cy = pinned ? (top + bottom) / 2 : Math.max(top + h / 2, Math.min(bottom - h / 2, r.top + r.height / 2));
+    const st = stages[+(im.closest("[data-i]") || {}).dataset?.i];
+    card.lastElementChild.textContent = st ? [st.year, ageOf(st) && "Age " + ageOf(st), st.title].filter(Boolean).join("  ·  ") : "";
+    pic.src = im.currentSrc || im.src;
+    card.style.cssText = `width:${w}px;left:${cx - w / 2}px;top:${cy - h / 2}px;`;
+    const k = r.width / iw;
+    const from = `translate(${r.left + r.width / 2 - cx}px, ${r.top + r.height / 2 - cy}px) scale(${k})`;
+    el.hidden = false;
+    el.classList.toggle("is-pinned", !!pinned);
+    el.classList.remove("is-up");
+    card.style.transition = "none";
+    card.style.transform = from;
+    card.dataset.from = from;
+    card.offsetWidth; // start from where the photo sits on the board
+    card.style.transition = "";
+    card.style.transform = "";
+    el.classList.add("is-up");
+    if (lifted) lifted.classList.remove("is-lifted");
+    im.classList.add("is-lifted");
+    lifted = im;
+  }
+  function dropLift() {
+    if (!lifted || !lift) return;
+    const card = lift.firstElementChild;
+    lifted.classList.remove("is-lifted");
+    lifted = null;
+    lift.classList.remove("is-up");
+    card.style.transform = card.dataset.from;
+    clearTimeout(liftT);
+    liftT = setTimeout(() => { if (!lifted) lift.hidden = true; }, reduced ? 0 : 420);
+  }
+  if (!editing) {
+    world.addEventListener("mouseover", (e) => {
+      if (!canHover) return;
+      const im = e.target.closest(PHOTOS);
+      if (im) { clearTimeout(liftT); liftT = setTimeout(() => raiseLift(im), 90); }
+    });
+    world.addEventListener("mouseout", (e) => {
+      if (!canHover || !e.target.closest(PHOTOS) || (e.relatedTarget && e.relatedTarget.closest?.(PHOTOS) === e.target)) return;
+      clearTimeout(liftT);
+      liftT = setTimeout(dropLift, 60);
+    });
+    world.addEventListener("click", (e) => {
+      const im = e.target.closest(PHOTOS);
+      if (!im || canHover) return;
+      if (lifted === im) dropLift(); else raiseLift(im, true);
+    });
+    addEventListener("keydown", (e) => { if (e.key === "Escape") dropLift(); });
+  }
+
   /* ---------- Edit mode ---------- */
   if (editing) {
     document.body.classList.add("is-editing");
@@ -365,6 +503,8 @@
     $(".controls").hidden = true;
 
     world.addEventListener("input", (e) => {
+      const bf = e.target.closest("[contenteditable][data-bf]");
+      if (bf) { board[bf.dataset.bf] = bf.innerText.trim(); saveDraft(); return; }
       const sf = e.target.closest("[contenteditable][data-sf]");
       if (sf) {
         stages[+sf.closest(".stop").dataset.i].scraps[+sf.closest("[data-sk]").dataset.sk][sf.dataset.sf] = sf.innerText.trim();
@@ -396,6 +536,7 @@
         st.photos[+tool.slice(-1)] = t.value.trim();
       }
       if (tool === "video") st.video = t.value.trim();
+      if (tool === "age") st.age = t.value.trim();
       if (tool === "background") st.background = t.value.trim();
       saveDraft(); render();
     });
@@ -431,10 +572,10 @@
   }
 
   function download() {
-    const cleanBoard = { background: board.background || "" };
+    const cleanBoard = { title: board.title || "", deck: board.deck || "", text: board.text || "", born: board.born || "", background: board.background || "" };
     const clean = stages.map((s) => ({
       kind: s.kind === "video" ? "video" : "postcard",
-      year: s.year || "", title: s.title || "", text: s.text || "", note: s.note || "",
+      year: s.year || "", age: s.age || "", title: s.title || "", text: s.text || "", note: s.note || "",
       photos: (s.photos || []).filter(Boolean), video: s.video || "", background: s.background || "",
       scraps: s.scraps.map(norm)
     }));
@@ -442,7 +583,10 @@
    JOURNEY — a scrapbook board, earliest stage at the top.
    Edit on journey.html?edit, then "Download journey.js".
 
+   JOURNEY_BOARD: the front-page newspaper (title, deck, text),
+           your birth year (born) for the ages down the left, and the wall
    kind:   "postcard" for smaller moments, "video" for bigger ones
+   year:   shows down the left; age: optional, otherwise worked out from born
    note:   optional red handwritten strip, e.g. a lyric
    photos: up to 2 image paths; video: a YouTube link or .mp4 path
    background: a photo of you at that age; fills the wall and fades into the next

@@ -19,10 +19,11 @@ Everything you'd change lives in the **`content/`** folder. On GitHub, open a fi
 
 ### Adding journey stages
 1. Open **`yoursite/journey.html?edit`**.
-2. Type into the dashed boxes. Use **+ Add stage** for a new one. Pick **Postcard** (smaller moment) or **Video** (bigger moment).
-3. For photos: upload them to `images/journey/` on GitHub (Add file → Upload files), then type the path, e.g. `images/journey/first-show.jpg`.
-4. For video: paste a YouTube link, or upload an `.mp4` to `images/journey/` and type its path.
-5. Press **Download journey.js**, then upload it into the `content/` folder on GitHub, replacing the old one.
+2. The newspaper at the top is the front page: type your headline and what the journey means to you. Add your birth year under it and your age shows next to each year down the left (or type an age on a stage).
+3. Type into the dashed boxes. Use **+ Add stage** for a new one. Pick **Postcard** (smaller moment) or **Video** (bigger moment).
+4. For photos: upload them to `images/journey/` on GitHub (Add file → Upload files), then type the path, e.g. `images/journey/first-show.jpg`.
+5. For video: paste a YouTube link, or upload an `.mp4` to `images/journey/` and type its path.
+6. Press **Download journey.js**, then upload it into the `content/` folder on GitHub, replacing the old one.
 
 ## Mailing list + analytics (Google Sheet)
 

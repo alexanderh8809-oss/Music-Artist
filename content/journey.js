@@ -2,7 +2,10 @@
    JOURNEY — a scrapbook board, earliest stage at the top.
    Edit on journey.html?edit, then "Download journey.js".
 
+   JOURNEY_BOARD: the front-page newspaper (title, deck, text),
+           your birth year (born) for the ages down the left, and the wall
    kind:   "postcard" for smaller moments, "video" for bigger ones
+   year:   shows down the left; age: optional, otherwise worked out from born
    note:   optional red handwritten strip, e.g. a lyric
    photos: up to 2 image paths; video: a YouTube link or .mp4 path
    background: a photo of you at that age; fills the wall and fades into the next
@@ -10,6 +13,10 @@
            photos { type: "photo", src }, layered behind the stage
    ============================================================ */
 window.JOURNEY_BOARD = {
+  "title": "The Journey",
+  "deck": "Follow the string. Scroll, or press the button.",
+  "text": "",
+  "born": "",
   "background": "images/journey/1st Performance.JPG"
 };
 
@@ -46,8 +53,8 @@ window.JOURNEY = [
   },
   {
     "kind": "postcard",
-    "year": "Xander begins posting",
-    "title": "",
+    "year": "2020",
+    "title": "Xander begins posting",
     "text": "YouTube Videos that got less than 100 views",
     "note": "",
     "photos": [],
