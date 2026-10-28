@@ -1,5 +1,5 @@
 /* ============================================================
-   XANDER HUDSON — website backend (Google Apps Script)
+   XANDER HUDSON - website backend (Google Apps Script)
 
    Lives inside a Google Sheet. It does three jobs:
    1. Saves every mailing-list email to the "Subscribers" tab.
@@ -15,7 +15,7 @@ const SUBS = "Subscribers", EVENTS = "Events";
 const SUB_HEAD = ["Time", "Email", "Source", "Page", "Visitor", "How"];
 const EV_HEAD = ["Time", "Visitor", "Session", "Event", "Page", "Source", "Referrer", "Detail", "Device", "Timezone", "Language", "Screen"];
 
-/* Run this once from the editor (Run ▸ setup). It makes the tabs and your admin key. */
+/* Run this once from the editor (Run > setup). It makes the tabs and your admin key. */
 function setup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   [[SUBS, SUB_HEAD], [EVENTS, EV_HEAD]].forEach(([name, head]) => {
@@ -139,7 +139,7 @@ function stats(days) {
     postcards: count(ev.filter((r) => r[3] === "song_play" || r[3] === "postcard_flip"), (r) => (r[3] === "song_play" ? "Played: " : "Flipped: ") + r[7]),
     journey,
     popup: { shown: of("popup_shown").length, joined: subsIn.filter((r) => r[5] === "popup").length, dismissed: of("popup_dismiss").length },
-    scroll: count(of("scroll_depth"), (r) => r[4] + " · " + r[7] + "%"),
+    scroll: count(of("scroll_depth"), (r) => r[4] + " \u00b7 " + r[7] + "%"),
     subscribers: subs.slice(-100).reverse().map((r) => ({ time: r[0].toISOString(), email: r[1], source: r[2], page: r[3], how: r[5] })),
     recent: ev.slice(-40).reverse().map((r) => ({ time: r[0].toISOString(), event: r[3], page: r[4], source: r[5], detail: r[7], place: place(r[9]) }))
   };
