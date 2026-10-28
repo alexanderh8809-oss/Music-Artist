@@ -183,7 +183,7 @@
   });
 
   /* ---------- The pop-up: a ticket that slides up on its own, once ----------
-     Shows after 12 seconds or halfway down the page. Never blocks the page,
+     Shows 8 seconds in. Never blocks the page,
      never comes back for 7 days after it's closed, never after joining. */
   let pop = null;
   function hidePop() { if (pop) pop.classList.remove("is-in"); }
@@ -212,12 +212,7 @@
     window.XH.track("popup_shown");
   }
   if (!joined() && !editing) {
-    const t = setTimeout(showPop, 12000);
-    const half = () => {
-      const max = document.documentElement.scrollHeight - innerHeight;
-      if (max > 0 && scrollY / max > 0.5) { clearTimeout(t); removeEventListener("scroll", half); showPop(); }
-    };
-    addEventListener("scroll", half, { passive: true });
+    setTimeout(showPop, 8000); // 8 seconds in
   }
 
   /* ---------- Footer: the building directory ---------- */
