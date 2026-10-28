@@ -249,6 +249,25 @@
       <small>&copy; ${new Date().getFullYear()} Xander Hudson · New York, NY</small>`;
   }
 
+  /* ---------- Side dock: Spotify, TikTok, Instagram, one tap away on every page ---------- */
+  const icons = {
+    spotify: '<path d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21Zm4.8 15.1a.65.65 0 0 1-.9.22c-2.46-1.5-5.56-1.84-9.2-1.01a.65.65 0 1 1-.3-1.27c3.99-.91 7.4-.52 10.17 1.17.31.19.4.59.23.89Zm1.28-2.85a.82.82 0 0 1-1.12.27c-2.82-1.73-7.12-2.23-10.45-1.22a.82.82 0 1 1-.47-1.57c3.8-1.15 8.54-.6 11.77 1.39.38.23.5.74.27 1.13Zm.11-2.97C14.8 8.77 9.2 8.58 5.96 9.56a.98.98 0 1 1-.57-1.88c3.72-1.13 9.9-.91 13.81 1.41a.98.98 0 0 1-1 1.69Z"/>',
+    tiktok: '<path d="M16.6 2h-3.3v13.3a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.1a6.3 6.3 0 1 0 5.3 6.2V8.6a7.7 7.7 0 0 0 4.4 1.4V6.7a4.4 4.4 0 0 1-4.4-4.4Z"/>',
+    instagram: '<path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.3-3.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/>',
+    youtube: '<path d="M22.5 7.2a2.8 2.8 0 0 0-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 0 0-2 2C1 8.9 1 12 1 12s0 3.1.5 4.8a2.8 2.8 0 0 0 2 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 0 0 2-2c.5-1.7.5-4.8.5-4.8s0-3.1-.5-4.8ZM9.8 15.1V8.9l5.7 3.1-5.7 3.1Z"/>'
+  };
+  const L = S.links || {};
+  const dockLinks = [["spotify", "Spotify"], ["tiktok", "TikTok"], ["instagram", "Instagram"], ["youtube", "YouTube"]].filter(([k]) => L[k]);
+  if (dockLinks.length && !editing && page !== "admin.html" && page !== "404.html") {
+    const dock = document.createElement("nav");
+    dock.className = "dock";
+    dock.setAttribute("aria-label", "Listen and follow");
+    dock.innerHTML = dockLinks.map(([k, n]) =>
+      `<a class="dock__btn" href="${esc(L[k])}" target="_blank" rel="noopener" data-track="${k}" aria-label="${n}">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${icons[k]}</svg><span>${n}</span></a>`).join("");
+    document.body.appendChild(dock);
+  }
+
   /* ---------- Postcards flip over when tapped ---------- */
   document.addEventListener("click", (e) => {
     const b = e.target.closest(".pcard__flip");

@@ -39,7 +39,6 @@
           <span>Written in New York, NY</span>
           <span>&copy;2026</span>
         </p>
-        <span class="stage__side stage__side--l" aria-hidden="true">NY</span>
         <span class="stage__side stage__side--r" aria-hidden="true">01</span>
 
         <div class="stage__door" aria-hidden="true">
@@ -81,17 +80,11 @@
         </div>
 
         <div class="stage__bio">
-          <p class="label">&#9679; Xander Hudson</p>
+          <a class="stage__proof" href="#most-played"><span class="stage__live" aria-hidden="true"></span><b data-stat="views"></b> views on TikTok &darr;</a>
           <p>Romantic, cinematic songs from New York that never land fully happy or fully sad. A jazz-trained guitarist who sings like a star and lives like everybody else.</p>
           <a class="btn btn--hit" href="#join" data-join>Join my mailing list</a>
         </div>
 
-        <nav class="stage__links" aria-label="Listen">
-          <a data-link="spotify" data-track="spotify" target="_blank" rel="noopener">Spotify &nearr;</a>
-          <a data-link="tiktok" data-track="tiktok" target="_blank" rel="noopener">TikTok &nearr;</a>
-          <a data-link="instagram" data-track="instagram" target="_blank" rel="noopener">Instagram &nearr;</a>
-          <a data-link="youtube" data-track="youtube" target="_blank" rel="noopener">YouTube &nearr;</a>
-        </nav>
         <div class="stage__now"></div>
         <a class="stage__cue" href="#bio">Scroll <span aria-hidden="true">&darr;</span></a>
       </div>
@@ -99,6 +92,37 @@
 
     <!-- A short intro: the record spins up, then the doors open -->
     <div class="intro" aria-hidden="true"><div class="intro__card"><img src="images/journey/Producing.jpg" alt=""></div></div>
+
+    <!-- Most played: the TikTok that 6.5M people watched. Nothing loads from TikTok until it's tapped. -->
+    <section class="played" id="most-played" aria-labelledby="played-title">
+      <div class="played__panel">
+        <header class="played__bar"><span class="label">&#9679; Most played</span><span class="played__count">01</span></header>
+        <div class="played__body">
+          <div class="phone">
+            <button class="phone__play" type="button" aria-label="Play the video here">
+              <img class="phone__poster" alt="Xander on his bed with a guitar, singing Hey There Delilah" width="628" height="412">
+              <span class="phone__btn" aria-hidden="true">&#9654;</span>
+            </button>
+            <span class="phone__handle" aria-hidden="true">@alexander.hudson46</span>
+          </div>
+          <div class="played__info">
+            <p class="label">TikTok · Cover</p>
+            <h2 id="played-title" class="played__title"></h2>
+            <p class="played__caption scrap"></p>
+            <dl class="played__stats">
+              <div><dt>Views</dt><dd data-stat="views"></dd></div>
+              <div><dt>Likes</dt><dd data-stat="likes"></dd></div>
+              <div><dt>Shares</dt><dd data-stat="shares"></dd></div>
+              <div><dt>Followers</dt><dd data-stat="followers"></dd></div>
+            </dl>
+            <div class="played__actions">
+              <a class="btn btn--hit" data-link="tiktok" data-track="tiktok" target="_blank" rel="noopener">Follow on TikTok</a>
+              <a class="arrow-link played__watch" target="_blank" rel="noopener" data-track="tiktok_video">Watch on TikTok <span aria-hidden="true">&nearr;</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Bio: a lyric sheet -->
     <section class="bio" id="bio" aria-labelledby="bio-title">

@@ -7,11 +7,25 @@ window.SITE = {
   contactEmail: "music@xanderhudson.com",
 
   // Link-in-bio links. Leave "" to hide a button.
+  // Spotify: your artist page, e.g. "https://open.spotify.com/artist/..."
+  // Instagram: e.g. "https://www.instagram.com/yourname"
   links: {
-    spotify: "https://open.spotify.com/",
-    tiktok: "https://www.tiktok.com/",
+    spotify: "",
+    tiktok: "https://www.tiktok.com/@alexander.hudson46",
     instagram: "",
     youtube: ""
+  },
+
+  // The TikTok shown on the home page. Update the numbers whenever you like.
+  featured: {
+    video: "https://www.tiktok.com/@alexander.hudson46/video/7652202639958052126",
+    poster: "images/tiktok-delilah.jpg",
+    title: "Hey There Delilah",
+    caption: "song sounds like leaving home after graduation",
+    views: "6.5M",
+    likes: "1.2M",
+    shares: "125.7K",
+    followers: "36K"
   },
 
   // Google Sheet backend: the "Web app URL" from backend/SETUP.md, step 4.

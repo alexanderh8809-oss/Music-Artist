@@ -24,6 +24,28 @@
   paint();
   $(".stage__now").innerHTML = window.XH.soundButton;
 
+  /* ---------- Most played: the TikTok, loaded only when tapped ---------- */
+  const F = (window.SITE || {}).featured || {};
+  const vid = (String(F.video || "").match(/video\/(\d+)/) || [])[1];
+  const played = $(".played");
+  if (!vid) { played.hidden = true; $(".stage__proof").hidden = true; }
+  else {
+    document.querySelectorAll("[data-stat]").forEach((el) => { el.textContent = F[el.dataset.stat] || "–"; });
+    $(".played__title").textContent = F.title || "";
+    $(".played__caption").textContent = F.caption || "";
+    $(".played__watch").href = F.video;
+    const poster = $(".phone__poster");
+    if (F.poster) poster.src = F.poster; else poster.remove();
+    $(".phone__play").addEventListener("click", (e) => {
+      const f = document.createElement("iframe");
+      f.src = `https://www.tiktok.com/player/v1/${vid}?autoplay=1&rel=0&description=0&music_info=0`;
+      f.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
+      f.title = F.title ? `${F.title} on TikTok` : "TikTok video";
+      e.currentTarget.replaceWith(f);
+      window.XH.track("tiktok_play", vid);
+    });
+  }
+
   /* ---------- Bio: the lines arrive one after another ---------- */
   const sheet = $(".reveal");
   $(".sheet").style.cssText += paper(5, "tb", 1.6);

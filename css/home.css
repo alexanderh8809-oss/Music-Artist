@@ -64,13 +64,10 @@
 .stage__meta { top: calc(var(--header-h) + 6px); right: var(--gutter); margin: 0; text-align: right; display: grid; gap: 0;
   font-family: var(--f-body); font-weight: 600; font-size: clamp(11px, 1.3vw, 17px); line-height: 1.15; letter-spacing: -.01em; color: rgba(242,236,226,.82); opacity: calc(1 - var(--p) * 2); }
 .stage__side { top: 50%; font-family: var(--f-body); font-weight: 600; font-size: 12px; color: rgba(242,236,226,.6); }
-.stage__side--l { left: var(--gutter); } .stage__side--r { right: var(--gutter); }
+.stage__side--r { right: var(--gutter); }
 .stage__bio { left: var(--gutter); bottom: 9vh; width: min(30vw, 320px); opacity: calc(1 - var(--p) * 2.2); }
 .stage__bio .label { color: var(--bone-dim); font-size: 12px; margin: 0 0 8px; }
 .stage__bio p:not(.label) { margin: 0 0 16px; font-size: 15px; line-height: 1.45; color: rgba(242,236,226,.82); }
-.stage__links { left: var(--gutter); bottom: 22px; display: flex; gap: 16px; flex-wrap: wrap; }
-.stage__links a { text-decoration: none; font-weight: 600; font-size: 13px; color: rgba(242,236,226,.72); }
-.stage__links a:hover { color: var(--bone); }
 .stage__now { right: var(--gutter); bottom: 16px; padding: 6px 14px 6px 6px; border-radius: 4px; background: rgba(28,30,35,.75); border: 1px solid rgba(242,236,226,.1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .stage__now .sound { font-size: 13px; gap: 10px; }
 .stage__now .sound__knob { width: 32px; height: 32px; }
@@ -83,11 +80,10 @@
   .stage__side { display: none; }
   .stage__name { top: calc(var(--header-h) + 2vh); width: 104vw; }
   .stage__door { bottom: auto; top: 30svh; width: min(56vw, 360px); left: 40%; }
-  .stage__record { right: -12vw; top: 44svh; width: min(40vw, 300px); }
-  .stage__bio { left: var(--gutter); right: var(--gutter); width: auto; bottom: 64px; background: linear-gradient(180deg, transparent, rgba(11,11,12,.9) 30%); padding-top: 40px; }
+  .stage__record { right: -10vw; top: 25svh; width: min(34vw, 260px); }
+  .stage__bio { left: var(--gutter); right: var(--gutter); width: auto; bottom: 22px; background: linear-gradient(180deg, transparent, rgba(11,11,12,.9) 30%); padding-top: 40px; }
   .stage__bio p:not(.label) { font-size: 15px; }
   .stage__bio .btn { width: 100%; }
-  .stage__links { bottom: 20px; gap: 14px; }
   .stage__now { bottom: 64px; display: none; }
   .stage__cue { display: none; }
 }
@@ -181,3 +177,42 @@
 .line-sign { display: flex; align-items: center; gap: 12px; margin: 26px 0 0; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 15px; color: var(--bone-dim); }
 .line-sign b { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; background: var(--verdigris); color: var(--ink); font-family: var(--f-body); font-stretch: 100%; font-weight: 800; font-size: 28px; letter-spacing: 0; }
 .stage__bio .btn { white-space: nowrap; }
+
+/* the proof line in the opening */
+.stage__proof { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 10px; text-decoration: none; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; color: var(--bone-dim); }
+.stage__proof b { color: var(--bone); font-weight: 800; }
+.stage__proof:hover { color: var(--bone); }
+.stage__live { width: 8px; height: 8px; border-radius: 50%; background: #ff2d55; box-shadow: 0 0 0 3px rgba(255,45,85,.25); animation: live 1.6s ease-in-out infinite; }
+@keyframes live { 50% { box-shadow: 0 0 0 6px rgba(255,45,85,0); } }
+
+/* ---------- Most played: a boxed panel, like a player window ---------- */
+.played { padding: 72px var(--gutter) 40px; background: #0b0b0c; }
+.played__panel { max-width: 1080px; margin: 0 auto; border: 1px solid rgba(242,236,226,.1); border-radius: 6px; background: #121316; overflow: hidden; }
+.played__bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid rgba(242,236,226,.08); }
+.played__bar .label { color: var(--bone); font-size: 13px; }
+.played__count { font-weight: 600; font-size: 13px; color: var(--bone-dim); }
+.played__body { display: grid; gap: 28px; padding: 26px clamp(16px, 3vw, 34px) 30px; align-items: center; }
+@media (min-width: 820px) { .played__body { grid-template-columns: auto 1fr; gap: 48px; } }
+
+/* a phone with the video in it */
+.phone { position: relative; justify-self: center; width: min(74vw, 300px); aspect-ratio: 9 / 16; border-radius: 34px; padding: 10px; background: #050506;
+  box-shadow: inset 0 0 0 2px #2b2d33, 0 0 0 1px #000, 0 30px 60px rgba(0,0,0,.55), 0 0 80px rgba(255,45,85,.08); rotate: -2deg; }
+.phone > button, .phone > iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 26px; overflow: hidden; background: #000; }
+.phone__play { position: relative; padding: 0; display: grid; place-items: center; cursor: pointer; }
+.phone__poster { width: 100%; height: auto; }
+.phone__btn { position: absolute; inset: 0; margin: auto; width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; padding-left: 4px;
+  background: rgba(242,236,226,.92); color: var(--ink); box-shadow: 0 8px 24px rgba(0,0,0,.5); transition: transform .3s var(--ease); }
+.phone__play:hover .phone__btn { transform: scale(1.08); }
+.phone__handle { position: absolute; left: 24px; bottom: 26px; font-weight: 600; font-size: 13px; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.7); pointer-events: none; }
+.phone:has(iframe) .phone__handle { display: none; }
+
+.played__info .label { color: #ff4d6d; margin: 0 0 6px; }
+.played__title { font-size: clamp(40px, 7vw, 76px); line-height: .95; }
+.played__caption { margin: 12px 0 22px; font-size: clamp(16px, 2vw, 20px); color: var(--bone-dim); }
+.played__stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin: 0 0 24px; background: rgba(242,236,226,.08); border: 1px solid rgba(242,236,226,.08); border-radius: 4px; overflow: hidden; }
+@media (min-width: 560px) { .played__stats { grid-template-columns: repeat(4, 1fr); } }
+.played__stats div { background: #121316; padding: 12px 14px; }
+.played__stats dt { font-family: var(--f-label); font-stretch: 62%; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: 12px; color: var(--bone-dim); }
+.played__stats dd { margin: 4px 0 0; font-family: var(--f-head); font-size: 30px; line-height: 1; }
+.played__actions { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+.played__watch { color: var(--bone); }
