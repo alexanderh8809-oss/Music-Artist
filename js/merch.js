@@ -7,7 +7,6 @@
   const rack = $(".rack"), stage = $(".rack__stage"), spin = $(".rack__spin"), now = $(".rack__now");
   const flat = matchMedia("(prefers-reduced-motion: reduce)").matches || !CSS.supports("transform-style", "preserve-3d");
 
-  $(".rack__sound").innerHTML = window.XH.soundButton;
   spin.innerHTML = cards.map((m, i) => `<div class="rack__slot" data-i="${i}">${window.XH.postcard(m, i)}</div>`).join("");
   const slots = [...spin.children], n = slots.length, step = 360 / n;
   let angle = 0, R = 0;
@@ -19,7 +18,7 @@
     turn(angle, false);
   }
   const front = () => ((Math.round(-angle / step) % n) + n) % n;
-  function turn(a, ease = true, dragging = false) { // while dragging, wait to pick the song
+  function turn(a, ease = true) {
     angle = a;
     spin.classList.toggle("is-easing", ease);
     spin.style.transform = `translateZ(${-R}px) rotateY(${angle}deg)`;
@@ -29,7 +28,6 @@
       if (i !== f) s.querySelector(".pcard").classList.remove("is-flipped");
     });
     now.innerHTML = `<b>${esc(cards[f].title)}</b>${esc(cards[f].number)} of ${pad(n)}`;
-    if (!dragging) window.XH.player.focus(slots[f].querySelector(".pcard"));
   }
   const pad = (x) => String(x).padStart(2, "0");
   const snap = () => turn(Math.round(angle / step) * step);
@@ -37,7 +35,6 @@
 
   if (flat) {
     rack.classList.add("is-flat");
-    window.XH.player.focus(slots[0].querySelector(".pcard"));
     now.textContent = "";
   } else {
     place();
@@ -52,7 +49,7 @@
       if (x0 === null) return;
       const dx = e.clientX - x0;
       if (!moved && Math.abs(dx) > 6) { moved = true; stage.classList.add("is-dragging"); }
-      if (moved) turn(a0 + dx * 0.35, false, true);
+      if (moved) turn(a0 + dx * 0.35, false);
     });
     addEventListener("pointerup", () => {
       if (x0 === null) return;

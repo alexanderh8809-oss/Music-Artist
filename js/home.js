@@ -22,7 +22,6 @@
   }
   if (!reduced) addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive: true });
   paint();
-  $(".stage__now").innerHTML = window.XH.soundButton;
 
   /* ---------- Most played: the TikTok, loaded only when tapped ---------- */
   const F = (window.SITE || {}).featured || {};
@@ -37,6 +36,8 @@
     $(".played__watch").href = F.video;
     const poster = $(".phone__poster");
     if (F.poster) poster.src = F.poster; else poster.remove();
+    // It's opened by a tap, so it plays with the sound on: once TikTok's player says
+    // it's ready, tell it to unmute and play (TikTok's embed postMessage API).
     const player = () => {
       const f = document.createElement("iframe");
       f.src = `https://www.tiktok.com/player/v1/${vid}?autoplay=1&rel=0&description=0&music_info=0`;
@@ -44,6 +45,15 @@
       f.title = F.title ? `${F.title} on TikTok` : "TikTok video";
       return f;
     };
+    const tell = (f, type) => f.contentWindow && f.contentWindow.postMessage({ type, value: null, "x-tiktok-player": true }, "*");
+    addEventListener("message", (e) => {
+      const d = e.data;
+      if (!d || !d["x-tiktok-player"] || !/tiktok\.com$/.test(new URL(e.origin).hostname)) return;
+      const f = [...document.querySelectorAll("iframe")].find((x) => x.contentWindow === e.source);
+      if (!f) return;
+      if (d.type === "onPlayerReady") { tell(f, "unMute"); tell(f, "play"); }
+      if (d.type === "onMute" && d.value === true && !f.dataset.unmuted) { f.dataset.unmuted = "1"; tell(f, "unMute"); }
+    });
     $(".phone__play").addEventListener("click", (e) => {
       e.currentTarget.replaceWith(player());
       window.XH.track("tiktok_play", vid);
@@ -73,6 +83,56 @@
     });
   }
 
+  /* ---------- Listen: Spotify's player beside the record ----------
+     The Spotify link in content/config.js (an artist page, album or playlist) plays
+     here with its own track list. Whatever song is playing, the record slides back
+     into its sleeve and comes out with that song's name on it. */
+  const S = window.SITE || {};
+  const sp = String((S.links || {}).spotify || "").match(/open\.spotify\.com\/(?:intl-\w+\/)?(artist|album|playlist|track)\/(\w+)/);
+  const listen = $(".listen");
+  if (sp) {
+    listen.innerHTML = `<div class="listen__player"></div>`;
+    listen.hidden = false;
+    document.body.classList.add("has-listen");
+    // phones: the player moves under the opening, where there's room for it
+    const narrow = matchMedia("(max-width: 960px)"), pin = $(".stage__pin"), slot = $(".listen-slot");
+    const seat = () => (narrow.matches ? slot : pin).appendChild(listen);
+    seat(); narrow.addEventListener("change", seat);
+
+    const record = $(".stage__record"), label = $(".sleeve__title"), names = {};
+    let playing = "";
+    const nameOf = (uri) => names[uri] || (names[uri] = fetch("https://open.spotify.com/oembed?url=" + encodeURIComponent(uri))
+      .then((r) => r.json()).then((j) => j.title || "").catch(() => ""));
+    function relabel(uri) {
+      playing = uri;
+      nameOf(uri).then((title) => {
+        if (!title || uri !== playing) return;
+        record.classList.add("is-changing"); // the record goes back in its sleeve…
+        setTimeout(() => { label.textContent = title; record.classList.remove("is-changing"); }, reduced ? 0 : 450); // …and comes out labelled
+        window.XH.track("song_play", title);
+      });
+    }
+    // the full player with its track list where there's room (phones, big screens); the slim one on laptops, so it clears the name
+    const tall = narrow.matches || matchMedia("(min-width: 1280px) and (min-height: 880px)").matches;
+    document.body.style.setProperty("--listen-h", (tall ? 352 : 152) + "px");
+    window.onSpotifyIframeApiReady = (API) => {
+      API.createController($(".listen__player", listen), { uri: `spotify:${sp[1]}:${sp[2]}`, width: "100%", height: tall ? 352 : 152 }, (c) => {
+        // Spotify makes its frame lazy-load, which never starts inside the pinned opening
+        const f = $("iframe", listen);
+        if (f && f.loading === "lazy") { f.loading = "eager"; f.src = f.src; }
+        c.addListener("playback_update", (e) => {
+          const d = e.data || {};
+          record.classList.toggle("is-spinning", !d.isPaused);
+          if (d.playingURI && d.playingURI !== playing && /^spotify:track:/.test(d.playingURI)) relabel(d.playingURI);
+        });
+      });
+    };
+    const js = document.createElement("script");
+    js.src = "https://open.spotify.com/embed/iframe-api/v1";
+    js.async = true;
+    document.body.appendChild(js);
+  }
+
   /* ---------- Bio: the lines arrive one after another ---------- */
   const sheet = $(".reveal");
   $(".sheet").style.cssText += paper(5, "tb", 1.6);
@@ -87,19 +147,6 @@
   const songs = (window.MERCH || []).filter((m) => !m.featured);
   const rail = $(".songs__rail");
   rail.innerHTML = songs.map((m, i) => window.XH.postcard(m, i)).join("");
-  $(".songs__sound").innerHTML = window.XH.soundButton;
-  // the card most in view is the one that plays (the first one to begin with)
-  window.XH.player.focus(rail.querySelector(".pcard"));
-  if ("IntersectionObserver" in window) {
-    const seen = new Map();
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => seen.set(e.target, e.intersectionRatio));
-      let best = null, max = 0.6;
-      seen.forEach((r, el) => { if (r > max) { max = r; best = el; } });
-      if (best) window.XH.player.focus(best);
-    }, { root: rail, threshold: [0.3, 0.6, 0.8, 1] });
-    rail.querySelectorAll(".pcard").forEach((c) => io.observe(c));
-  }
 
   /* ---------- Shows: one stop per continent ---------- */
   const regions = window.TOUR || [];

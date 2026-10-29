@@ -77,10 +77,6 @@
 .stage__bio { left: var(--gutter); bottom: 9vh; width: min(30vw, 320px); opacity: calc(1 - var(--p) * 2.2); }
 .stage__bio .label { color: var(--bone-dim); font-size: 12px; margin: 0 0 8px; }
 .stage__bio p:not(.label) { margin: 0 0 16px; font-size: 15px; line-height: 1.45; color: rgba(242,236,226,.82); }
-.stage__now { right: var(--gutter); bottom: 16px; }
-.stage__now .sound { font-size: 13px; gap: 10px; }
-.stage__now .sound__knob { width: 32px; height: 32px; }
-.stage__now .nowplaying { display: none; }
 .stage__cue { left: 50%; bottom: 20px; translate: -50% 0; z-index: 3; text-decoration: none; font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: rgba(242,236,226,.6); opacity: calc(1 - var(--p) * 4); }
 
 /* phones: name on top, door in the middle, record peeking from the right, bio under */
@@ -93,7 +89,6 @@
   .stage__bio { left: var(--gutter); right: var(--gutter); width: auto; bottom: 22px; background: linear-gradient(180deg, transparent, rgba(11,11,12,.9) 30%); padding-top: 40px; }
   .stage__bio p:not(.label) { font-size: 15px; }
   .stage__bio .btn { width: 100%; }
-  .stage__now { bottom: 64px; display: none; }
   .stage__cue { display: none; }
 }
 
@@ -142,7 +137,6 @@
 .songs { padding: 72px 0 64px; }
 .songs__head h2, .shows h2 { font-size: clamp(40px, 9vw, 72px); margin: 10px 0 8px; max-width: 14ch; }
 .songs__head p, .shows__hint { margin: 0; color: var(--bone-dim); }
-.songs__sound { margin-top: 18px; }
 .songs__rail {
   display: grid; grid-auto-flow: column; grid-auto-columns: min(82vw, 380px); gap: 22px;
   overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
@@ -278,3 +272,25 @@ figure.tile::after { display: none; }
 .played { background: linear-gradient(180deg, #24120f, #0b0b0c 60%); }
 
 @media (prefers-reduced-motion: reduce) { .sleeve em, .tile--neon span { animation: none; } }
+
+/* ---------- Listen: Spotify's player where the record was; the record moves left ---------- */
+.listen { z-index: 4; right: var(--gutter); bottom: max(24px, 5vh); width: min(320px, 27vw); opacity: calc(1 - var(--p) * 2.2); }
+.listen__player { min-height: var(--listen-h, 152px); }
+.listen__player iframe { display: block; }
+.sleeve__title { max-width: 86%; }
+
+/* the record only turns while a song plays, and slides back in to be relabelled */
+.disc { transition: translate .45s var(--ease); }
+.stage__record.is-changing .disc { translate: 0 0; }
+.has-listen .disc { animation-play-state: paused; }
+.has-listen .stage__record.is-spinning .disc { animation-play-state: running; }
+@media (min-width: 961px) {
+  .has-listen .stage__meta { display: none; } /* Spotify's track list says the same thing */
+  /* to the left of the player and a little above it, clear of his face in the doorway */
+  .has-listen .stage__record { right: calc(var(--gutter) + min(320px, 27vw) + 16px); top: auto; bottom: calc(max(24px, 5vh) + var(--listen-h, 152px) - 40px); width: min(18vw, 200px); }
+}
+
+/* phones: the player sits under the opening */
+.listen-slot:empty { display: none; }
+.listen-slot { padding: 48px var(--gutter) 8px; background: #0b0b0c; }
+.listen-slot .listen { position: static; width: auto; max-width: 520px; opacity: 1; }

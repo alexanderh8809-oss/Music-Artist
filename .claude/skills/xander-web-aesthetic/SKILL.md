@@ -71,7 +71,7 @@ The brand allows **3 fonts max**:
 | Role | Font | Use |
 |---|---|---|
 | Display serif | **Young Serif** | Wordmark, headings, newspaper headlines and body, prices. Heavy, warm, literary, and not one of the overused "AI site" serifs (Instrument Serif, Fraunces, Playfair). |
-| Script accent | **Homemade Apple** | Real pen handwriting for lyric lines, captions, postcard backs and notes. Never a headline. It runs large and tall: size it about 0.7× what you would expect, with line-height 1.7 or more. |
+| Script accent | **Mynerve** (as "XH Hand") | Real pen handwriting for lyric lines, captions, postcard backs and notes. Never a headline. Loaded in `css/style.css` with `size-adjust: 120%`. Swapped in Oct 28, 2026 because Homemade Apple was too hard to read. |
 | Grotesque | **Archivo** (variable width) | Body text at normal width. Labels, buttons, tickets and the subway line at `font-stretch: 62%`, uppercase, .12–.16em tracking. That one family covers both jobs. |
 
 Chosen on Oct 28, 2026 after a side-by-side test against DM Serif Display, Bodoni Moda, Rozha One, Gloock, Mrs Saint Delafield, La Belle Aurore and Nothing You Could Do. One Google Fonts request loads all three.
@@ -115,7 +115,7 @@ The motion should feel like a camera and like light: slow eases, physical weight
 - Animate only `transform` and `opacity`. Keep `filter`, `box-shadow`, `clip-path` and `backdrop-filter` static. Changing them every frame causes repaints.
 - No scroll listeners that read layout every frame. Read once, cache, and use rAF.
 - `prefers-reduced-motion: reduce` turns off every camera move, parallax, tilt and auto-transition. The content must still be complete.
-- No autoplay audio, ever. Songs play only after the visitor presses "Play the songs" (then each postcard that comes to the front plays its clip). Video autoplays only muted, only short ambient loops, and never on phones on cellular data if that can be avoided.
+- No autoplay audio, ever. No sound toggles either: songs play in Spotify's own player on the home page when the visitor presses play there (the record is relabelled with whatever's playing), and the TikTok plays with sound because it's opened by a tap. Video autoplays only muted, only short ambient loops, and never on phones on cellular data if that can be avoided.
 - ⚠️ **Don't use `loading="lazy"` inside a transformed camera** (the Journey world). The browser never sees those images scroll in, so they never load. This broke behind-the-stage photos on Oct 28, 2026.
 - Paper grain uses the tiny inline `feTurbulence` SVG data-URIs in `css/journey.css` (under 1KB, no request), kept at subtle opacity.
 

@@ -1,6 +1,6 @@
 /* Journey page: a scrapbook board. Stages come from content/journey.js.
-   View mode: scrolling glides a camera along the red string, easing into
-   each stage. Edit mode (journey.html?edit): type into the boxes, then
+   View mode: each scroll, swipe or key press glides the camera along the
+   red string to the next stage, never stopping halfway. Edit mode (journey.html?edit): type into the boxes, then
    download journey.js. */
 (function () {
   const { $, esc, rng, paper } = window.XH;
@@ -20,7 +20,7 @@
   const saveDraft = () => { try { localStorage.setItem(DRAFT, JSON.stringify({ board, stages })); } catch {} };
 
   const bgsEl = $(".bgs");
-  const cam = $(".cam"), boardEl = $(".board"), world = $(".world"), track = $(".track");
+  const cam = $(".cam"), boardEl = $(".board"), world = $(".world");
   const counter = $(".ctl__count"), prevBtn = $(".ctl--prev"), nextBtn = $(".ctl--next");
   const rail = $(".rail");
   const pad = (n) => String(n).padStart(2, "0");
@@ -225,7 +225,7 @@
     </section>`;
 
   /* ---------- Render ---------- */
-  let els = [], bgs = [], boxes = [], frames = [], H = 1, cur = null, target = null, raf = 0;
+  let els = [], bgs = [], boxes = [], frames = [];
 
   function render() {
     if (board.background) {
@@ -247,7 +247,8 @@
       world.style.setProperty("--u", Math.min(440, cam.clientWidth * 0.84) / 100 + "px");
     } else {
       layout();
-      onScroll();
+      apply(frameAt(pos));
+      show(at);
     }
   }
 
@@ -316,15 +317,9 @@
     }).join("");
 
     frames = boxes.map((b) => Math.min(1, (availH() - 30) / b.h, (vw - 16) / (b.w * 1.2)));
-
-    // one screen of scrolling per stage, with soft snap points
-    H = Math.max(420, cam.clientHeight * 0.95);
-    track.style.height = (els.length - 1) * H + innerHeight + "px";
-    const off = track.offsetTop; // snap points are measured from the page top, under the header
-    track.innerHTML = els.map((_, i) => `<i style="top:${i * H - off}px"></i>`).join("");
   }
 
-  /* ---------- Camera: follows the scroll, eases into each stage ---------- */
+  /* ---------- Camera: one swipe, scroll or key press moves exactly one stage ---------- */
   const lerp = (a, b, t) => a + (b - a) * t;
   const ease = (f) => (f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2);
 
@@ -355,52 +350,90 @@
     });
   }
 
-  let lastT = 0;
-  function tick(now) {
-    const dt = Math.min(64, now - (lastT || now)); lastT = now;
-    const k = 1 - Math.pow(1 - 0.14, dt / 16.7);
-    cur = { s: lerp(cur.s, target.s, k), p: lerp(cur.p, target.p, k), tx: lerp(cur.tx, target.tx, k), ty: lerp(cur.ty, target.ty, k) };
-    apply(cur);
-    const done = Math.abs(cur.tx - target.tx) < 0.1 && Math.abs(cur.ty - target.ty) < 0.1 && Math.abs(cur.s - target.s) < 0.0005;
-    if (done) { apply((cur = target)); raf = 0; lastT = 0; } else raf = requestAnimationFrame(tick);
+  let pos = 0, at = 0, anim = 0;
+  function show(idx) {
+    const last = els.length - 1;
+    counter.textContent = idx === 0 ? "Start" : idx === last ? "End" : `${pad(idx)} / ${pad(stages.length)}`;
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === last;
   }
-
-  let shown = -1;
-  function onScroll() {
-    const p = scrollY / H;
-    target = frameAt(p);
-    if (!cur || reduced) { apply((cur = target)); }
-    else if (!raf) raf = requestAnimationFrame(tick);
-
-    const idx = Math.max(0, Math.min(els.length - 1, Math.round(p))), last = els.length - 1;
-    lightRail(idx, p);
+  function frame(p) {
+    pos = p;
+    apply(frameAt(p));
+    lightRail(at, p);
+  }
+  function goTo(i) {
+    i = Math.max(0, Math.min(els.length - 1, i));
+    if (i === at) return;
     if (lifted) dropLift();
-    if (idx !== shown) {
-      shown = idx;
-      counter.textContent = idx === 0 ? "Start" : idx === last ? "End" : `${pad(idx)} / ${pad(stages.length)}`;
-      prevBtn.disabled = idx === 0;
-      nextBtn.disabled = idx === last;
-      window.XH.track("journey_stage", { stage: idx });
-    }
+    const from = pos, steps = Math.abs(i - from);
+    at = i;
+    show(i);
+    window.XH.track("journey_stage", { stage: i });
+    cancelAnimationFrame(anim);
+    if (reduced) return frame(i);
+    // one stage at a time eases inside the step; a jump along the years eases as a whole
+    const dur = Math.min(1700, 1000 + (steps - 1) * 220), t0 = performance.now();
+    const run = (now) => {
+      const t = Math.min(1, (now - t0) / dur);
+      frame(from + (i - from) * (steps > 1.01 ? ease(t) : t));
+      if (t < 1) anim = requestAnimationFrame(run); else anim = 0;
+    };
+    anim = requestAnimationFrame(run);
   }
-  const goTo = (i) => scrollTo({ top: Math.max(0, i) * H, behavior: reduced ? "auto" : "smooth" });
+  const busy = () => anim !== 0;
 
   if (!editing) {
-    addEventListener("scroll", onScroll, { passive: true });
-    nextBtn.addEventListener("click", () => goTo(shown + 1));
-    prevBtn.addEventListener("click", () => goTo(shown - 1));
+    nextBtn.addEventListener("click", () => goTo(at + 1));
+    prevBtn.addEventListener("click", () => goTo(at - 1));
     rail && rail.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b) goTo(+b.dataset.go); });
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    scrollTo(0, 0);
+    const elsewhere = (t) => t.closest && t.closest("dialog, .pop, input, textarea, select");
+
+    // Mouse wheel and trackpad: one flick is one stage, however long the trackpad keeps coasting
+    let acc = 0, locked = false, quiet = 0, lastD = 0;
+    addEventListener("wheel", (e) => {
+      if (e.ctrlKey || elsewhere(e.target)) return; // ctrl+wheel is pinch zoom
+      e.preventDefault();
+      const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : 0;
+      clearTimeout(quiet);
+      quiet = setTimeout(() => { locked = false; acc = 0; }, 200);
+      // a fresh flick (deltas growing again) after the camera has landed counts as a new gesture
+      if (locked && !busy() && Math.abs(d) > 24 && Math.abs(d) > Math.abs(lastD) * 1.6) locked = false;
+      lastD = d;
+      if (locked) return;
+      acc += d;
+      if (Math.abs(acc) > 36) { locked = true; acc = 0; goTo(at + Math.sign(d)); }
+    }, { passive: false });
+
+    // Touch: a swipe up or down moves one stage; taps still reach photos and buttons
+    let y0 = null, x0 = 0;
+    addEventListener("touchstart", (e) => {
+      if (elsewhere(e.target) || e.touches.length > 1) { y0 = null; return; }
+      y0 = e.touches[0].clientY; x0 = e.touches[0].clientX;
+    }, { passive: true });
+    addEventListener("touchmove", (e) => { if (y0 !== null && e.cancelable) e.preventDefault(); }, { passive: false });
+    addEventListener("touchend", (e) => {
+      if (y0 === null) return;
+      const t = e.changedTouches[0], dy = y0 - t.clientY, dx = x0 - t.clientX;
+      y0 = null;
+      if (Math.abs(dy) > 36 && Math.abs(dy) > Math.abs(dx)) goTo(at + Math.sign(dy));
+    });
+
+    addEventListener("keydown", (e) => {
+      if (elsewhere(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
+      const k = e.key;
+      const to = k === "ArrowDown" || k === "PageDown" || (k === " " && !e.shiftKey) ? at + 1
+        : k === "ArrowUp" || k === "PageUp" || (k === " " && e.shiftKey) ? at - 1
+        : k === "Home" ? 0 : k === "End" ? els.length - 1 : null;
+      if (to === null || (k === " " && e.target.closest("button, a"))) return;
+      e.preventDefault();
+      goTo(to);
+    });
+
     let rt;
     const relayout = () => {
       clearTimeout(rt);
-      rt = setTimeout(() => {
-        const p = scrollY / H, oldH = H;
-        layout();
-        if (H !== oldH) scrollTo({ top: p * H, behavior: "instant" }); // only when the screen size changed
-        onScroll();
-      }, 120);
+      rt = setTimeout(() => { layout(); apply(frameAt(pos)); }, 120);
     };
     addEventListener("resize", relayout);
     world.addEventListener("load", relayout, true); // photos change sizes once loaded

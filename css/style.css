@@ -2,6 +2,12 @@
    Ink night, bone paper, verdigris copper, and the sunset as the only
    orange: the lit elevator button, the Join ticket, the sky.
    Rules: .claude/skills/xander-web-aesthetic/SKILL.md */
+/* The handwriting: Mynerve, a clear pen hand. Scaled up so it sits at the size the
+   old script (Homemade Apple) was tuned for, and every caption stays where it was. */
+@font-face {
+  font-family: "XH Hand"; font-style: normal; font-weight: 400; font-display: swap; size-adjust: 120%;
+  src: url(https://fonts.gstatic.com/s/mynerve/v8/P5sCzZKPdNjb4jt79CNkiL2t2dk.woff2) format("woff2");
+}
 :root {
   --ink: #131417;
   --ink-2: #1c1e23;
@@ -19,7 +25,7 @@
   --f-head: "Young Serif", Georgia, serif;
   --f-body: "Archivo", system-ui, sans-serif;
   --f-label: "Archivo", "Arial Narrow", sans-serif; /* used condensed: font-stretch 62% */
-  --f-scrap: "Homemade Apple", cursive;
+  --f-scrap: "XH Hand", "Mynerve", cursive;
 
   --gutter: clamp(16px, 5vw, 48px);
   --header-h: 64px;
@@ -309,40 +315,6 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 400; line-height: 1; margi
 .pop .form-msg .scrap { color: var(--verdigris-deep); }
 .pop__close { position: absolute !important; z-index: 3 !important; top: 4px; right: 4px; width: 44px; height: 44px; border: 0; background: none; font-size: 26px; color: #4a4339; }
 .journey-page .pop { bottom: calc(max(16px, env(safe-area-inset-bottom)) + 84px); } /* above the stage controls */
-
-/* ---------- Songs: a record slides out of the card that's playing ---------- */
-.pcard__record {
-  position: absolute; z-index: -1; top: 6%; left: 50%; width: 62%; aspect-ratio: 1; margin-left: -31%; border-radius: 50%;
-  background:
-    radial-gradient(circle, #111 0 3%, var(--sunset) 3.5% 17%, #191919 17.5% 19%, transparent 19.5%),
-    repeating-radial-gradient(circle, #1b1b1d 0 1.5px, #262629 2px 3px),
-    #161618;
-  box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 0 0 2px #0c0c0d;
-  transform: translateY(0); transition: transform .8s var(--ease);
-}
-.pcard__record::after { /* the shine that shows it turning */
-  content: ""; position: absolute; inset: 0; border-radius: 50%;
-  background: conic-gradient(from 20deg, transparent 0 12%, rgba(255,255,255,.12) 16%, transparent 22% 62%, rgba(255,255,255,.08) 66%, transparent 72%);
-}
-.pcard.is-playing .pcard__record { transform: translateY(-46%); }
-.pcard.is-playing.is-sounding .pcard__record { animation: spin 1.8s linear infinite; }
-@keyframes spin { from { transform: translateY(-46%) rotate(0); } to { transform: translateY(-46%) rotate(360deg); } }
-.pcard__in { z-index: 1; }
-
-.sound {
-  display: inline-flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; color: var(--bone);
-  font-family: var(--f-label); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 16px;
-}
-.sound__knob { width: 44px; height: 44px; border-radius: 0; display: grid; place-items: center; background: var(--ink-2); border: 1px solid rgba(184,146,90,.6); }
-.sound__knob svg { width: 18px; height: 18px; }
-.sound[aria-pressed="true"] .sound__knob { background: var(--sunset); border-color: var(--sunset); color: var(--ink); }
-.nowplaying { display: flex; align-items: center; gap: 10px; min-height: 24px; margin: 10px 0 0; color: var(--bone-dim); font-size: 15px; }
-.nowplaying b { color: var(--bone); font-weight: 600; }
-.eq { display: inline-flex; gap: 3px; align-items: flex-end; height: 16px; }
-.eq i { width: 3px; height: 100%; background: var(--verdigris); transform-origin: bottom; animation: eq .9s ease-in-out infinite; }
-.eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.6s; } .eq i:nth-child(4) { animation-delay: -.15s; }
-@keyframes eq { 0%, 100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
-.nowplaying:not(.is-sounding) .eq i { animation: none; transform: scaleY(.25); }
 
 /* ---------- Side dock: Spotify / TikTok / Instagram on every page ---------- */
 .dock { position: fixed; z-index: 45; left: max(10px, env(safe-area-inset-left)); top: 50%; translate: 0 -50%; display: grid; gap: 0; }

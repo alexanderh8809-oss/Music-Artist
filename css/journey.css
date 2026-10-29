@@ -11,9 +11,8 @@
   position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0;
   overflow: hidden; background: #1a130e;
 }
-.track { position: relative; pointer-events: none; }
-.track i { position: absolute; left: 0; width: 1px; height: 1px; scroll-snap-align: start; }
-html:has(.journey-page:not(.is-editing)) { scroll-snap-type: y proximity; scroll-behavior: auto; }
+/* the page itself never scrolls: the camera moves one stage per gesture */
+html:has(.journey-page:not(.is-editing)), .journey-page:not(.is-editing) { height: 100%; overflow: hidden; overscroll-behavior: none; }
 
 /* The wall: an uploaded photo, or a drawn bookshelf */
 .board {
@@ -236,7 +235,7 @@ p.empty-box { display: block; padding: .3em .5em; }
 .is-editing .board { position: fixed; inset: 0; }
 .is-editing .world { position: relative; transform: none !important; display: flex; flex-direction: column; align-items: center; gap: 90px; width: auto !important; height: auto !important; }
 .is-editing .stop { position: relative; transform: none !important; }
-.is-editing .bgs, .is-editing .string, .is-editing .controls, .is-editing .track, .is-editing .vignette, .is-editing .rail { display: none; }
+.is-editing .bgs, .is-editing .string, .is-editing .controls, .is-editing .vignette, .is-editing .rail { display: none; }
 .is-editing .masthead__text { column-count: 1; min-height: 6em; text-align: left; }
 .is-editing [data-stop="intro"] .tools { margin-top: 40px; }
 [contenteditable] { outline: 1.5px dashed rgba(43,184,163,.8); outline-offset: 3px; border-radius: 2px; min-width: 4ch; }

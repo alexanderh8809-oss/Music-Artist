@@ -17,7 +17,7 @@ Why this concept:
 - **Journey is the strongest page.** It already has a world: a corkboard, string, torn paper and photos that fade by age. Keep it and refine it.
 - **Home is the weakest.** A dark screen with a centered name and buttons is the template look. It has no photo of him and no object from his world above the fold.
 - **The colors are right and the contrast is good.** All main text pairs pass, and the orange button already uses dark text, which is correct.
-- **Fonts were 5; the brand allows 3.** Done: now Young Serif, Homemade Apple and Archivo.
+- **Fonts were 5; the brand allows 3.** Done: now Young Serif, Mynerve (the handwriting, swapped in from Homemade Apple for readability) and Archivo.
 - **The photos are heavy.** `MORETHANWORDS .png` is 1.9MB and `TikToks.png` is 1.3MB. Several JPGs are over 600KB. On phones, that's the main source of lag.
 
 ## The floors
@@ -32,7 +32,7 @@ Why this concept:
 
 ### Floor 1: Journey (`journey.html`)
 - Keep everything that's built.
-- Done: the year is now in Young Serif, the notes and "to be continued" in Homemade Apple, and the labels in condensed Archivo.
+- Done: the year is now in Young Serif, the notes and "to be continued" in the handwriting font, and the labels in condensed Archivo.
 - Done (stage 2): the years run down the left like a lift shaft, with his age under each and the current one lit; tap one to jump there. The front-page newspaper is his to write (headline, standfirst and a two-column story, in `?edit`). Hovering any photo lifts it off the board at full size; on phones, tap it.
 - **The ox appears at "to be continued…"**, holding the note. Clicking it opens the mailing list.
 - Compress all journey photos to 300KB or less.

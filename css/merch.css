@@ -58,4 +58,3 @@
 .rack.is-flat .rack__spin { position: static; width: auto; height: auto; margin: 0; transform: none !important; display: grid; grid-auto-flow: column; grid-auto-columns: var(--w); gap: 20px; overflow-x: auto; padding: 10px var(--gutter) 20px; scroll-snap-type: x mandatory; }
 .rack.is-flat .rack__slot { position: relative; transform: none !important; scroll-snap-align: start; }
 .rack.is-flat .rack__pole, .rack.is-flat .rack__controls, .rack.is-flat .rack__hint { display: none; }
-.rack__sound { display: flex; flex-direction: column; align-items: center; margin-top: 18px; }

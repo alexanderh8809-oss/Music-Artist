@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="image" href="images/journey/Producing.jpg" fetchpriority="high">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..800&family=Homemade+Apple&family=Young+Serif&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..800&family=Young+Serif&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/home.css">
 </head>
@@ -68,9 +68,12 @@
         </h1>
 
         <div class="stage__record" aria-hidden="true">
-          <div class="sleeve"><img src="images/journey/Piano.jpg" alt="" width="1400" height="1050"><em>Postcards</em><span>Xander Hudson<br>First songs</span></div>
+          <div class="sleeve"><img src="images/journey/Piano.jpg" alt="" width="1400" height="1050"><em class="sleeve__title">Postcards</em><span>Xander Hudson<br>First songs</span></div>
           <div class="disc"><b>XANDER<br>HUDSON</b></div>
         </div>
+
+        <!-- Listen: Spotify's player. Shown once there's a Spotify link in content/config.js. -->
+        <div class="listen" hidden></div>
 
         <div class="stage__bio">
           <a class="stage__proof" href="#most-played"><b data-stat="views"></b> views on TikTok</a>
@@ -83,10 +86,12 @@
           <span class="mini__label"><b data-stat="views"></b><span class="mini__on"> on TikTok</span></span>
         </button>
 
-        <div class="stage__now"></div>
         <a class="stage__cue" href="#bio">Scroll</a>
       </div>
     </section>
+
+    <!-- On phones the Spotify player sits here, under the opening -->
+    <section class="listen-slot" aria-label="Listen"></section>
 
     <!-- A short intro: the record spins up, then the doors open -->
     <div class="intro" aria-hidden="true"><div class="intro__card"><img src="images/journey/Producing.jpg" alt=""></div></div>
@@ -161,8 +166,7 @@
     <section class="songs" aria-labelledby="songs-title">
       <div class="wrap songs__head">
         <h2 id="songs-title">Postcards from the first songs.</h2>
-        <p>Tap a card to turn it over. Turn the sound on and each song plays as its card comes up.</p>
-        <div class="songs__sound"></div>
+        <p>Tap a card to turn it over.</p>
       </div>
       <div class="songs__rail" tabindex="0" aria-label="Song postcards"></div>
       <div class="wrap"><a class="arrow-link" href="merch.html">All postcards, floor 2</a></div>

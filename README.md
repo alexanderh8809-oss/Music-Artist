@@ -35,9 +35,9 @@ Every email and every visit, click and song play goes into a Google Sheet you ow
 
 Until the Sheet is connected, the Join form opens an email to your music address instead.
 
-## Song clips
+## Songs on Spotify
 
-Put short MP3s in `music/` and add each path to its postcard in `content/merch.js` (`audio: "music/elevator-girl.mp3"`). Visitors press **Play the songs** once, then each postcard plays as it comes to the front.
+Paste your Spotify link into `content/config.js` under `spotify` (your artist page, an album or a playlist of the songs; in Spotify: **Share → Copy link**). Spotify's player then shows on the home page next to the record, with the track list. Whatever song is playing, the record is labelled with its name. The same link fills the Spotify button on the side.
 
 ## Publishing
 
