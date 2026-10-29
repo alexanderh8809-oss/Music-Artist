@@ -18,6 +18,7 @@ Everything you'd change lives in the **`content/`** folder. On GitHub, open a fi
 | `content/tour.js` | Tour dates per continent (the stops on the X line) |
 | `content/merch.js` | Postcards: price, place, date, photo, song clip, checkout link |
 | `content/journey.js` | Journey stages |
+| `content/fanwall.js` | The fan wall on the home page: fan photos, fan art and comments |
 
 ### Adding journey stages
 1. Open **`yoursite/journey.html?edit`**.
@@ -36,6 +37,10 @@ Every email and every visit, click and song play goes into a Google Sheet you ow
 - Instagram bio: `https://alexanderh8809-oss.github.io/Music-Artist/?utm_source=instagram`
 
 Until the Sheet is connected, the Join form opens an email to your music address instead.
+
+## The fan wall
+
+The "Made by you." section on the home page is two rows of fan photos, fan art and comments that drift slowly across the screen (they pause when you hover). To add a piece, ask the fan first, upload the picture to `images/fans/` on GitHub, then add a line to `content/fanwall.js`; the examples at the top of that file show each kind. Until there are 8 pieces, empty frames ("your selfie with Xander", "your drawing"...) fill the gaps and invite fans to send theirs. The **Send yours** link opens an email to your music address.
 
 ## Founding Fans
 

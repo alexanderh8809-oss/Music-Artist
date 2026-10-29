@@ -272,9 +272,9 @@
           <li><a href="./"><b>L</b>Lobby</a></li>
           <li><a href="journey.html"><b>1</b>The Journey</a></li>
           <li><a href="merch.html"><b>2</b>Postcards</a></li>
-          <li><a href="./#shows"><b>3</b>Shows</a></li>
-          <li><a href="fans.html"><b>4</b>Founding Fans</a></li>
-          <li><a href="contact.html"><b>5</b>Industry</a></li>
+          <li><a href="fans.html"><b>3</b>Founding Fans</a></li>
+          <li><a href="contact.html"><b>4</b>Industry</a></li>
+          <li><a href="./#shows"><b>X</b>Shows</a></li>
         </ul>
       </div>
       <div>

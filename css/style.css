@@ -106,9 +106,10 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 400; line-height: 1; margi
 }
 @media (max-width: 560px) {
   .site-header { gap: 8px; }
-  .wordmark { font-size: 19px; }
-  .site-nav { gap: 2px; }
-  .floor { flex-direction: column; gap: 2px; padding: 4px 6px; font-size: 10px; letter-spacing: .12em; }
+  /* five floors on a phone: the name stacks on two lines, like a building sign */
+  .wordmark { font-size: 18px; line-height: 1; white-space: normal; max-width: 4.6em; }
+  .site-nav { gap: 0; }
+  .floor { flex-direction: column; gap: 2px; padding: 4px; font-size: 10px; letter-spacing: .1em; }
   .floor i { width: 26px; height: 26px; }
   .site-nav .hide-sm { display: none; }
 }

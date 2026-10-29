@@ -143,6 +143,50 @@
     }, { threshold: 0.35 }).observe(sheet);
   }
 
+  /* ---------- The fan wall: two belts drifting opposite ways (content/fanwall.js) ---------- */
+  const handle = ((S.links || {}).tiktok || "").match(/@[^/?]+/);
+  const send = $("[data-fan-send]");
+  send.href = `mailto:${S.contactEmail}?subject=${encodeURIComponent("For the fan wall")}&body=${encodeURIComponent("Attach your photo, drawing or video, and tell me your @ so I can credit you.\n\n")}`;
+  if (handle) send.insertAdjacentHTML("afterend", ` <span class="fanwall__or">or tag <a href="${esc(S.links.tiktok)}" target="_blank" rel="noopener" data-track="tiktok">${esc(handle[0])}</a></span>`);
+
+  const pieces = (window.FAN_WALL || []).filter((f) => f && (f.src || f.text));
+  const waiting = ["your selfie with Xander", "your drawing", "your cover", "the comment you left", "your concert photo", "your edit"];
+  // while the wall is young, empty frames fill it out and ask for more
+  const items = pieces.slice();
+  for (let i = 0; items.length < 8; i++) items.push({ type: "empty", text: waiting[i % waiting.length] });
+  const piece = (f) => {
+    const by = esc(f.by || "");
+    if (f.type === "comment") return `<blockquote class="fw fw--note"><p>“${esc(f.text)}”</p><cite>${by}${f.from ? " on " + esc(f.from) : ""}</cite></blockquote>`;
+    if (f.type === "empty") return `<div class="fw fw--empty${f.text.length > 14 ? " is-wide" : ""}"><span>${esc(f.text)}</span></div>`;
+    const art = f.type === "art";
+    return `<figure class="fw fw--${art ? "art" : "photo"}">${art ? '<span class="tp" style="--r:-3deg"></span>' : ""}
+      <img src="${esc(f.src)}" alt="${art ? "Fan art" : "Fan photo"}${by ? " from " + by : ""}" decoding="async">
+      <figcaption>${by ? `<b>${art ? "art by " : ""}${by}</b>` : ""}${f.note ? `<span>${esc(f.note)}</span>` : ""}</figcaption></figure>`;
+  };
+  const belts = $(".belts");
+  function buildBelts() {
+    const rows = [items.filter((_, i) => i % 2 === 0), items.filter((_, i) => i % 2 === 1)];
+    belts.innerHTML = rows.map((row, r) => {
+      let set = row.slice();
+      while (set.length < 8) set = set.concat(row); // long enough to cross a wide screen
+      const html = set.map(piece).join("");
+      return `<div class="belt${r ? " belt--back" : ""}"><div class="belt__track">
+        <div class="belt__set">${html}</div><div class="belt__set" aria-hidden="true">${html}</div></div></div>`;
+    }).join("");
+    // a steady walking pace whatever the length: about 35px a second
+    const pace = () => belts.querySelectorAll(".belt__track").forEach((t) => t.style.setProperty("--dur", `${Math.max(30, t.scrollWidth / 2 / 35)}s`));
+    pace();
+    belts.querySelectorAll("img").forEach((img) => img.addEventListener("load", pace, { once: true }));
+    // stop moving while it's off screen
+    new IntersectionObserver(([e]) => belts.classList.toggle("is-paused", !e.isIntersecting)).observe(belts);
+  }
+  // build it as it comes near, so the photos load right then
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver((entries, io) => {
+      if (entries[0].isIntersecting) { io.disconnect(); buildBelts(); }
+    }, { rootMargin: "800px 0px" }).observe(belts);
+  } else buildBelts();
+
   /* ---------- Song postcards ---------- */
   const songs = (window.MERCH || []).filter((m) => !m.featured);
   const rail = $(".songs__rail");

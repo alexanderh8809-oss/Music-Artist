@@ -248,33 +248,55 @@
 .watch__close { position: absolute; top: -52px; right: -6px; width: 44px; height: 44px; border: 0; background: none; color: var(--bone); font-size: 30px; }
 .watch__link { display: flex; width: fit-content; margin: 16px auto 0; color: var(--bone); }
 
-/* ---------- Moments: a Pinterest-style board ---------- */
-.moments { padding: 88px 0 72px; background: linear-gradient(180deg, #0b0b0c, #171012 40%, #120d10); }
-.moments__head h2 { font-size: clamp(40px, 8vw, 80px); margin: 0 0 34px; line-height: .98; max-width: 16ch; }
-.tiles { columns: 2 150px; column-gap: 12px; padding: 0 var(--gutter); max-width: 1180px; margin: 0 auto; }
-@media (min-width: 760px) { .tiles { columns: 3 220px; column-gap: 16px; } }
-@media (min-width: 1100px) { .tiles { columns: 4; } }
-.tile { break-inside: avoid; margin: 0 0 12px; position: relative; overflow: hidden; background: #1d1719; }
-@media (min-width: 760px) { .tile { margin-bottom: 16px; } }
-figure.tile { padding: 6px 6px 0; background: #efe8da; }
-figure.tile::after { display: none; }
-.tile img { width: 100%; height: auto; display: block; filter: sepia(.22) saturate(1.08) contrast(1.04); }
-.tile--tall img { aspect-ratio: 3 / 4; object-fit: cover; }
-.tile::after { /* a soft warm halation on every photo */
-  content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light;
-  background: radial-gradient(120% 80% at 80% 0%, rgba(255,170,110,.45), transparent 60%), linear-gradient(180deg, transparent 55%, rgba(20,8,6,.55));
+/* ---------- The fan wall: two belts of fan photos, art and comments drifting past ---------- */
+.fanwall { padding: 88px 0 72px; overflow: hidden; background: linear-gradient(180deg, #0b0b0c, #171012 40%, #120d10); }
+.fanwall__head h2 { font-size: clamp(40px, 8vw, 80px); margin: 0 0 14px; line-height: .98; }
+.fanwall__head p { color: var(--bone-dim); max-width: 46ch; margin: 0; }
+.fanwall__send { margin-top: 20px !important; }
+.fanwall__or { margin-left: 14px; color: var(--bone-dim); font-size: 15px; }
+.fanwall__or a { color: var(--bone); }
+.belts { --h: 200px; display: grid; gap: 22px; margin-top: 40px; min-height: calc(var(--h) * 2 + 140px); }
+@media (min-width: 760px) { .belts { --h: 250px; gap: 28px; } }
+.belt { overflow: hidden; padding: 14px 0; }
+.belt__track { display: flex; width: max-content; animation: belt var(--dur, 70s) linear infinite; }
+.belt--back .belt__track { animation-direction: reverse; }
+.belt__set { display: flex; align-items: center; gap: 22px; padding-right: 22px; }
+@keyframes belt { to { transform: translateX(-50%); } }
+.belts.is-paused .belt__track { animation-play-state: paused; }
+@media (hover: hover) { .belt:hover .belt__track { animation-play-state: paused; } }
+@media (prefers-reduced-motion: reduce) {
+  .belt { overflow-x: auto; scroll-snap-type: x proximity; }
+  .belt__track { animation: none; padding: 0 var(--gutter); }
+  .belt__set[aria-hidden] { display: none; }
+  .belt__set > * { scroll-snap-align: center; }
 }
-.tile figcaption { position: relative; z-index: 1; padding: 6px 4px 8px; font-family: var(--f-scrap); font-size: 12px; line-height: 1.7; color: #2a2724; }
-.tile--neon { display: grid; place-items: center; aspect-ratio: 4 / 5; background: radial-gradient(70% 60% at 50% 50%, #2a1210, #0c0708); }
-.tile--neon span { font-family: var(--f-scrap); font-size: clamp(18px, 2.6vw, 28px); line-height: 1.9; text-align: center; rotate: -6deg;
-  color: #ffd9c4; text-shadow: 0 0 4px #ff8a5c, 0 0 14px #ff6a3d, 0 0 34px rgba(255,90,50,.8); animation: neon 7s steps(1) infinite; }
-.tile--quote { padding: 22px 18px; background: #f2ebdc; }
-.tile--quote p { margin: 0; font-family: var(--f-head); font-size: clamp(22px, 2.6vw, 30px); line-height: 1.1; color: #221e19; }
+
+/* each piece is a real object: a print, a taped drawing, a comment copied onto paper */
+.fw { flex: none; margin: 0; position: relative; }
+.fw:nth-child(3n+1) { rotate: -1.6deg; } .fw:nth-child(3n+2) { rotate: 1.2deg; } .fw:nth-child(3n) { rotate: -.4deg; }
+.fw img { height: var(--h); width: auto; max-width: none; display: block; filter: sepia(.15) saturate(1.05); }
+.fw--photo { padding: 8px 8px 0; background: #efe8da; box-shadow: 0 10px 22px rgba(0,0,0,.45); }
+.fw--art { padding: 12px; background: #f7f3ea; box-shadow: 0 10px 22px rgba(0,0,0,.45); }
+.fw--art img { height: calc(var(--h) - 4px); filter: none; }
+.fw--art .tp { --u: 3px; left: 50%; }
+.fw figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 6px 2px 8px; color: #2a2724; font-size: 13px; }
+.fw figcaption b { font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.fw figcaption span { font-family: var(--f-scrap); color: #4a4339; }
+.fw--art figcaption { padding-bottom: 0; }
+.fw--note { width: calc(var(--h) * 1.05); min-height: calc(var(--h) * .8); padding: 22px 20px 18px; display: flex; flex-direction: column; justify-content: space-between;
+  background: var(--bone); color: var(--ink); box-shadow: 0 10px 22px rgba(0,0,0,.45); }
+.fw--note p { margin: 0; font-family: var(--f-head); font-size: clamp(19px, 2vw, 23px); line-height: 1.2; }
+.fw--note cite { margin-top: 14px; font-style: normal; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: 13px; color: #a3302a; }
+/* an empty frame, waiting for a fan's piece */
+.fw--empty { display: grid; place-items: center; height: calc(var(--h) + 34px); aspect-ratio: 4 / 5; padding: 16px; text-align: center;
+  background: #1d1719; outline: 1.5px dashed rgba(242,236,226,.28); outline-offset: -10px; color: var(--bone-dim); }
+.fw--empty span { font-family: var(--f-scrap); font-size: 17px; line-height: 1.4; }
+.fw--empty.is-wide { aspect-ratio: 5 / 4; }
 
 /* the most-played panel sits in the same warm dusk */
 .played { background: linear-gradient(180deg, #24120f, #0b0b0c 60%); }
 
-@media (prefers-reduced-motion: reduce) { .sleeve em, .tile--neon span { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .sleeve em { animation: none; } }
 
 /* ---------- Listen: Spotify's player where the record was; the record moves left ---------- */
 .listen { z-index: 4; right: var(--gutter); bottom: max(24px, 5vh); width: min(320px, 27vw); opacity: calc(1 - var(--p) * 2.2); }

@@ -24,6 +24,8 @@
       <a class="floor" href="./" aria-current="page"><i>L</i>Lobby</a>
       <a class="floor" href="journey.html"><i>1</i>Journey</a>
       <a class="floor" href="merch.html"><i>2</i>Postcards</a>
+      <a class="floor" href="fans.html"><i>3</i>Fans</a>
+      <a class="floor" href="contact.html"><i>4</i>Industry</a>
       <a class="btn btn--hit btn--sm hide-sm" href="#join" data-join>Join</a>
     </nav>
   </header>
@@ -127,20 +129,14 @@
       </div>
     </section>
 
-    <!-- Moments: a board of real photos, like a Pinterest board -->
-    <section class="moments" aria-labelledby="moments-title">
-      <div class="wrap moments__head">
-        <h2 id="moments-title">Ordinary situations, beautiful moments.</h2>
+    <!-- The fan wall: fan photos, art and comments drifting past (content/fanwall.js) -->
+    <section class="fanwall" aria-labelledby="fanwall-title">
+      <div class="wrap fanwall__head">
+        <h2 id="fanwall-title">Made by you.</h2>
+        <p>Selfies, drawings, covers and the comments that stuck. Tag me or send yours, and it goes up on the wall.</p>
+        <p class="fanwall__send"><a class="arrow-link" data-fan-send href="#">Send yours</a></p>
       </div>
-      <div class="tiles">
-        <figure class="tile tile--tall"><img src="images/journey/1st Performance.JPG" alt="Xander on stage with a guitar" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>first stage, 2016</figcaption></figure>
-        <div class="tile tile--neon" aria-hidden="true"><span>no receipts<br>required</span></div>
-        <figure class="tile"><img src="images/tiktok-delilah.jpg" alt="Xander on his bed singing Hey There Delilah" loading="lazy" decoding="async" width="628" height="412"><figcaption>6.5M views later</figcaption></figure>
-        <figure class="tile tile--tall"><img src="images/journey/Slash 1.JPG" alt="Xander dressed as Slash for Halloween" loading="lazy" decoding="async" width="1050" height="1400"><figcaption>halloween, as slash</figcaption></figure>
-        <figure class="tile"><img src="images/journey/Piano.jpg" alt="Xander playing keys" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>at the keys</figcaption></figure>
-        <div class="tile tile--quote" aria-hidden="true"><p>Never fully happy.<br>Never fully sad.</p></div>
-        <figure class="tile"><img src="images/journey/Slash 2.JPG" alt="Xander with a guitar" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>wanted to shred</figcaption></figure>
-      </div>
+      <div class="belts"></div>
     </section>
 
     <!-- Bio: a lyric sheet -->
@@ -198,6 +194,7 @@
   <script src="content/config.js"></script>
   <script src="content/tour.js"></script>
   <script src="content/merch.js"></script>
+  <script src="content/fanwall.js"></script>
   <script src="js/site.js"></script>
   <script src="js/cards.js"></script>
   <script src="js/home.js"></script>

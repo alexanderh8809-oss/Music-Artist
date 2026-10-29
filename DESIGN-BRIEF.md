@@ -30,6 +30,8 @@ Why this concept:
 - **Bio:** stays right under the hero, set like a lyric sheet on bone paper with one script line.
 - **Songs:** the 7 early songs as **postcards you flip in 3D.** The front is the image, the back has the place, date and a handwritten line. Tap to flip.
 
+**The fan wall** ("Made by you.", replaced the Moments board on Oct 29, 2026): two belts of fan selfies, fan art and copied-out comments drifting opposite ways, about 35px a second, paused on hover and offscreen, a still scrollable row with reduced motion. Prints, taped drawings and paper notes, never cards. Empty dashed frames invite fans until real pieces arrive. Filled from `content/fanwall.js`.
+
 ### Floor 1: Journey (`journey.html`)
 - Keep everything that's built.
 - Done: the year is now in Young Serif, the notes and "to be continued" in the handwriting font, and the labels in condensed Archivo.
@@ -51,7 +53,7 @@ Why this concept:
 - The building's sign-in register. A bone **pass** with a punched hole (what Founding Fans get, spots left, the sign-up) beside a **ledger page** with a red margin rule: one numbered line per fan, names in pen. The first 1,000 signups are numbered for life by the Google Sheet. Linked from the home page ("The first 1,000."), the sign-up dialog and pop-up, and the footer directory.
 
 ### Floor 5: Industry (`contact.html`)
-- The office upstairs. The form is a **"While you were out" phone-message slip** printed in marker red, with ruled lines to write on and the topic as tick boxes. Beside it, an "At a glance" fact sheet filled from `content/config.js`. Only in the footer directory, not the header, so fans aren't steered there.
+- The office upstairs. The form is a **"While you were out" phone-message slip** printed in marker red, with ruled lines to write on and the topic as tick boxes. Beside it, an "At a glance" fact sheet filled from `content/config.js`. In the header as floor 4 and in the footer. On phones the five floors fit because the wordmark stacks on two lines.
 
 ### Basement: 404 page
 - "Stuck between floors." Elevator doors are slightly open, with a button back to the lobby.
