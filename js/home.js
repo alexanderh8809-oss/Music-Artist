@@ -31,6 +31,7 @@
   if (!vid) { played.hidden = true; $(".stage__proof").hidden = true; $(".mini").hidden = true; }
   else {
     document.querySelectorAll("[data-stat]").forEach((el) => { el.textContent = F[el.dataset.stat] || "–"; });
+    $(".played__stats").style.cssText += paper(33, "tb", 1.4); // torn top and bottom, like a till roll
     $(".played__title").textContent = F.title || "";
     $(".played__caption").textContent = F.caption || "";
     $(".played__watch").href = F.video;
@@ -59,7 +60,7 @@
         sheet.setAttribute("aria-label", F.title ? `${F.title} on TikTok` : "TikTok video");
         sheet.innerHTML = `<button class="watch__close" type="button" aria-label="Close">&times;</button>
           <div class="phone watch__phone"></div>
-          <a class="arrow-link watch__link" href="${esc(F.video)}" target="_blank" rel="noopener" data-track="tiktok_video">Open in TikTok <span aria-hidden="true">&nearr;</span></a>`;
+          <a class="arrow-link watch__link" href="${esc(F.video)}" target="_blank" rel="noopener" data-track="tiktok_video">Open in TikTok</a>`;
         document.body.appendChild(sheet);
         const close = () => sheet.close();
         $(".watch__close", sheet).addEventListener("click", close);

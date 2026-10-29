@@ -154,7 +154,7 @@ p.empty-box { display: block; padding: .3em .5em; }
 .screen > video, .screen > iframe, .screen > .yt, .screen > .ph { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
 .yt { padding: 0; border: 0; background: #000; display: block; }
 .yt img { width: 100%; height: 100%; object-fit: cover; opacity: .85; }
-.yt__play { position: absolute; inset: 0; margin: auto; width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: var(--bone); color: var(--ink); display: grid; place-items: center; font-size: calc(var(--u) * 5); }
+.yt__play { position: absolute; inset: 0; margin: auto; width: calc(var(--u) * 16); height: calc(var(--u) * 16); background: var(--bone); color: var(--ink); display: grid; place-items: center; font-size: calc(var(--u) * 5); }
 
 /* opening + closing pages */
 .masthead { z-index: 2; --bg: linear-gradient(100deg, transparent 48%, rgba(70,50,25,.12) 49.6%, rgba(255,250,235,.4) 50.4%, transparent 52.5%), #e8ddc3; --stain-size: 30% 24%; --stain-at: 12% 80%; padding: calc(var(--u) * 5) calc(var(--u) * 5.5) calc(var(--u) * 6); transform: rotate(-1.5deg); text-align: center; color: #2b2620; }
@@ -223,10 +223,10 @@ p.empty-box { display: block; padding: .3em .5em; }
 /* ---------- Controls ---------- */
 .controls {
   position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); translate: -50% 0; z-index: 40;
-  display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 999px;
-  background: rgba(28,30,35,.88); border: 1px solid rgba(242,236,226,.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: flex; align-items: center; gap: 12px; padding: 6px;
+  background: var(--ink); border: 1px solid rgba(184,146,90,.35);
 }
-.ctl { width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid rgba(242,236,226,.22); background: none; font-size: 18px; }
+.ctl { width: 48px; height: 48px; border: 1px solid rgba(184,146,90,.55); background: var(--ink-2); font-size: 18px; }
 .ctl:disabled, .ctl--next:disabled { opacity: .3; cursor: default; }
 .ctl__count { font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .14em; font-size: 15px; min-width: 64px; text-align: center; color: var(--bone-dim); }
 .ctl--next { white-space: nowrap; }
@@ -250,7 +250,7 @@ p[contenteditable], div[contenteditable] { display: block; }
 .tools label { display: grid; gap: 4px; font-family: var(--f-label); font-stretch: 62%; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: 12px; color: var(--bone-dim); }
 .tools input, .tools select { font: inherit; font-size: 15px; text-transform: none; letter-spacing: 0; min-height: 40px; padding: 0 10px; border-radius: 4px; border: 1px solid #444; background: var(--ink); color: var(--bone); }
 .tools__row { display: flex; gap: 8px; flex-wrap: wrap; }
-.tools__row button { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid #555; background: none; font-size: 13px; }
+.tools__row button { min-height: 36px; padding: 0 12px; border: 1px solid #555; background: none; font-size: 13px; }
 .tools h3 { font-family: var(--f-head); font-size: 22px; margin: 0 0 4px; }
 .tools p { margin: 0; color: var(--bone-dim); font-size: 14px; line-height: 1.5; }
 .editbar {

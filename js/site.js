@@ -161,10 +161,10 @@
     d.setAttribute("aria-labelledby", "join-title");
     d.innerHTML = `
       <div class="dialog__card paper" style="${paper(77, "tb", 1.8)}">
-        <span class="label">Mailing list · Admit one</span>
+        <span class="label">Admit one</span>
         <button class="dialog__close" type="button" aria-label="Close">&times;</button>
         <h2 id="join-title">Get the next postcard first.</h2>
-        <p>New songs, postcard drops and shows near you. No spam, unsubscribe any time.</p>
+        <p>New songs, postcard drops and shows near you.</p>
         ${formHTML("join-email")}
       </div>`;
     document.body.appendChild(d);
@@ -197,7 +197,7 @@
     pop.setAttribute("style", paper(81, "lr", 1.4));
     pop.innerHTML = `
       <button class="pop__close" type="button" aria-label="Close">&times;</button>
-      <span class="label">Admit one · Mailing list</span>
+      <span class="label">Admit one</span>
       <h2>Get the next postcard first.</h2>
       ${formHTML("pop-email")}`;
     document.body.appendChild(pop);

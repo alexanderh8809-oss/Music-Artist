@@ -200,7 +200,7 @@
           ${editing ? bField("p", "masthead__text", "text", board.text, "What the journey means to you. This is the front-page story.")
             : board.text ? `<p class="masthead__text">${esc(board.text)}</p>` : `<i class="masthead__lines"></i>`}
         </div>
-        <p class="masthead__jump">Story continues along the string <span aria-hidden="true">&rarr;</span></p>
+        <p class="masthead__jump">Story continues along the string</p>
       </div>`;
   };
   const intro = () => `<section class="stop" data-stop="intro">

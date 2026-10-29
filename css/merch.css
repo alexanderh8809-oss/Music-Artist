@@ -3,7 +3,7 @@
    register. Cards sit on a ring in CSS 3D; the ring turns.
    ============================================================ */
 .shop-head { padding: 56px var(--gutter) 8px; }
-.shop-head h1 { font-size: clamp(56px, 15vw, 120px); margin: 10px 0 12px; line-height: .9; }
+.shop-head h1 { font-size: clamp(56px, 15vw, 120px); margin: 0 0 12px; line-height: .9; }
 .shop-head p { color: var(--bone-dim); max-width: 44ch; margin: 0; }
 
 .rack { --w: min(68vw, 300px); position: relative; padding: 40px 0 10px; overflow: hidden; }
@@ -26,7 +26,7 @@
 .rack__pole { position: absolute; left: 50%; top: -40px; bottom: 0; width: 6px; margin-left: -3px; z-index: -1; background: linear-gradient(90deg, #3a3c42, #8d8f96 40%, #2a2c31); }
 
 .rack__controls { display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 8px; }
-.rack__btn { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(184,146,90,.6); background: none; font-size: 20px; }
+.rack__btn { width: 52px; height: 52px; border: 1px solid rgba(184,146,90,.6); background: var(--ink-2); font-size: 20px; }
 .rack__btn:hover { border-color: var(--bone); }
 .rack__now { min-width: 12ch; margin: 0; text-align: center; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 16px; }
 .rack__now b { display: block; font-family: var(--f-head); font-weight: 400; letter-spacing: 0; text-transform: none; font-size: 24px; color: var(--bone); }
@@ -44,9 +44,9 @@
 .sleeve h2 { font-size: clamp(32px, 7vw, 52px); }
 .sleeve p { margin: 0; color: #4a4339; }
 .sleeve__fan { display: flex; padding: 6px 0 4px 18px; }
-.sleeve__fan span { width: 64px; aspect-ratio: 2 / 3; margin-left: -18px; border: 3px solid #f4efe4; background: linear-gradient(160deg, var(--dusk), var(--cobalt)); box-shadow: 0 4px 10px rgba(0,0,0,.25); }
-.sleeve__fan span:nth-child(3n+2) { background: linear-gradient(200deg, var(--peach), var(--dusk)); }
-.sleeve__fan span:nth-child(3n) { background: linear-gradient(180deg, var(--verdigris), var(--cobalt)); }
+.sleeve__fan span { width: 64px; aspect-ratio: 2 / 3; margin-left: -18px; border: 3px solid #f4efe4; background: #2a231d; box-shadow: 0 4px 10px rgba(0,0,0,.25); }
+.sleeve__fan span:nth-child(3n+2) { background: #30271f; }
+.sleeve__fan span:nth-child(3n) { background: #232a28; }
 .sleeve__fan span:nth-child(odd) { rotate: -4deg; } .sleeve__fan span:nth-child(even) { rotate: 3deg; }
 .sleeve__buy { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .sleeve__price { font-family: var(--f-head); font-size: 34px; }

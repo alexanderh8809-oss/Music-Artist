@@ -33,7 +33,7 @@
     <section class="stage" aria-labelledby="hero-name">
       <div class="stage__pin">
         <div class="stage__leak" aria-hidden="true"></div>
-        <div class="stage__frame" aria-hidden="true"><span>Vol. 01 &middot; Golden hour &middot; New York &middot; 2026</span></div>
+        <div class="stage__frame" aria-hidden="true"></div>
         <p class="stage__meta" aria-label="The first songs">
           <span>&ldquo;Postcards&rdquo; First Songs</span>
           <span>aSide: Elevator Girl, Macbook, More Than My Love</span>
@@ -57,24 +57,15 @@
                 <stop offset=".57" stop-color="#fff1e2"/>
                 <stop offset="1" stop-color="#eab48e"/>
               </linearGradient>
-              <filter id="glow" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>
               <path id="arc1" d="M60,200 Q500,40 940,200"/>
               <path id="arc2" d="M110,372 Q500,232 890,372"/>
             </defs>
-            <g class="stage__glow" filter="url(#glow)">
-              <text><textPath href="#arc1" startOffset="50%" text-anchor="middle">XANDER</textPath></text>
-              <text><textPath href="#arc2" startOffset="50%" text-anchor="middle">HUDSON</textPath></text>
-            </g>
             <g class="stage__chrome">
               <text><textPath href="#arc1" startOffset="50%" text-anchor="middle">XANDER</textPath></text>
               <text><textPath href="#arc2" startOffset="50%" text-anchor="middle">HUDSON</textPath></text>
             </g>
           </svg>
-          <i class="glint" style="--x:9%;--y:40%;--d:0s"></i><i class="glint" style="--x:31%;--y:13%;--d:1.1s"></i>
-          <i class="glint" style="--x:57%;--y:9%;--d:.4s"></i><i class="glint" style="--x:88%;--y:36%;--d:1.7s"></i>
-          <i class="glint" style="--x:21%;--y:83%;--d:2.2s"></i><i class="glint" style="--x:74%;--y:80%;--d:.8s"></i>
         </h1>
-        <p class="stage__tag" aria-hidden="true"><span>Songs</span><span>for</span><span>the</span><span>most</span><span>beautiful</span><span>moments</span><span>in</span><span>ordinary</span><span>situations</span></p>
 
         <div class="stage__record" aria-hidden="true">
           <div class="sleeve"><img src="images/journey/Piano.jpg" alt="" width="1400" height="1050"><em>Postcards</em><span>Xander Hudson<br>First songs</span></div>
@@ -82,18 +73,18 @@
         </div>
 
         <div class="stage__bio">
-          <a class="stage__proof" href="#most-played"><span class="stage__live" aria-hidden="true"></span><b data-stat="views"></b> views on TikTok &darr;</a>
+          <a class="stage__proof" href="#most-played"><b data-stat="views"></b> views on TikTok</a>
           <p>Romantic, cinematic songs from New York that never land fully happy or fully sad. A jazz-trained guitarist who sings like a star and lives like everybody else.</p>
           <a class="btn btn--hit" href="#join" data-join>Join my mailing list</a>
         </div>
 
         <button class="mini" type="button" aria-label="Play my most popular TikTok, Hey There Delilah">
           <span class="mini__screen"><img class="mini__poster" alt="" width="628" height="412"><span class="mini__play" aria-hidden="true">&#9654;</span></span>
-          <span class="mini__label"><span class="stage__live" aria-hidden="true"></span><b data-stat="views"></b><span class="mini__on"> on TikTok</span></span>
+          <span class="mini__label"><b data-stat="views"></b><span class="mini__on"> on TikTok</span></span>
         </button>
 
         <div class="stage__now"></div>
-        <a class="stage__cue" href="#bio">Scroll <span aria-hidden="true">&darr;</span></a>
+        <a class="stage__cue" href="#bio">Scroll</a>
       </div>
     </section>
 
@@ -103,7 +94,7 @@
     <!-- Most played: the TikTok that 6.5M people watched. Nothing loads from TikTok until it's tapped. -->
     <section class="played" id="most-played" aria-labelledby="played-title">
       <div class="played__panel">
-        <header class="played__bar"><span class="label">&#9679; Most played</span><span class="played__count">01</span></header>
+        <header class="played__bar"><span class="label">Most played</span></header>
         <div class="played__body">
           <div class="phone">
             <button class="phone__play" type="button" aria-label="Play the video here">
@@ -116,7 +107,7 @@
             <p class="label">TikTok · Cover</p>
             <h2 id="played-title" class="played__title"></h2>
             <p class="played__caption scrap"></p>
-            <dl class="played__stats">
+            <dl class="played__stats paper" aria-label="TikTok numbers">
               <div><dt>Views</dt><dd data-stat="views"></dd></div>
               <div><dt>Likes</dt><dd data-stat="likes"></dd></div>
               <div><dt>Shares</dt><dd data-stat="shares"></dd></div>
@@ -124,7 +115,7 @@
             </dl>
             <div class="played__actions">
               <a class="btn btn--hit" data-link="tiktok" data-track="tiktok" target="_blank" rel="noopener">Follow on TikTok</a>
-              <a class="arrow-link played__watch" target="_blank" rel="noopener" data-track="tiktok_video">Watch on TikTok <span aria-hidden="true">&nearr;</span></a>
+              <a class="arrow-link played__watch" target="_blank" rel="noopener" data-track="tiktok_video">Watch on TikTok</a>
             </div>
           </div>
         </div>
@@ -134,18 +125,15 @@
     <!-- Moments: a board of real photos, like a Pinterest board -->
     <section class="moments" aria-labelledby="moments-title">
       <div class="wrap moments__head">
-        <span class="label">Moments</span>
-        <h2 id="moments-title">Ordinary situations,<br><em>beautiful moments.</em></h2>
+        <h2 id="moments-title">Ordinary situations, beautiful moments.</h2>
       </div>
       <div class="tiles">
         <figure class="tile tile--tall"><img src="images/journey/1st Performance.JPG" alt="Xander on stage with a guitar" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>first stage, 2016</figcaption></figure>
         <div class="tile tile--neon" aria-hidden="true"><span>no receipts<br>required</span></div>
         <figure class="tile"><img src="images/tiktok-delilah.jpg" alt="Xander on his bed singing Hey There Delilah" loading="lazy" decoding="async" width="628" height="412"><figcaption>6.5M views later</figcaption></figure>
-        <div class="tile tile--sky" aria-hidden="true"><b>Golden<br>hour</b><small>New York, NY</small></div>
         <figure class="tile tile--tall"><img src="images/journey/Slash 1.JPG" alt="Xander dressed as Slash for Halloween" loading="lazy" decoding="async" width="1050" height="1400"><figcaption>halloween, as slash</figcaption></figure>
         <figure class="tile"><img src="images/journey/Piano.jpg" alt="Xander playing keys" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>at the keys</figcaption></figure>
         <div class="tile tile--quote" aria-hidden="true"><p>Never fully happy.<br>Never fully sad.</p></div>
-        <div class="tile tile--palette" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><small>the palette</small></div>
         <figure class="tile"><img src="images/journey/Slash 2.JPG" alt="Xander with a guitar" loading="lazy" decoding="async" width="1400" height="1050"><figcaption>wanted to shred</figcaption></figure>
       </div>
     </section>
@@ -165,26 +153,24 @@
           </p>
           <p class="sheet__sign scrap">X.</p>
         </article>
-        <a class="arrow-link bio__next" href="journey.html">Floor 1: the journey <span aria-hidden="true">&rarr;</span></a>
+        <a class="arrow-link bio__next" href="journey.html">Floor 1: the journey</a>
       </div>
     </section>
 
     <!-- The first songs, as postcards -->
     <section class="songs" aria-labelledby="songs-title">
       <div class="wrap songs__head">
-        <span class="label">The first seven songs</span>
         <h2 id="songs-title">Postcards from the first songs.</h2>
         <p>Tap a card to turn it over. Turn the sound on and each song plays as its card comes up.</p>
         <div class="songs__sound"></div>
       </div>
       <div class="songs__rail" tabindex="0" aria-label="Song postcards"></div>
-      <div class="wrap"><a class="arrow-link" href="merch.html">All postcards, floor 2 <span aria-hidden="true">&rarr;</span></a></div>
+      <div class="wrap"><a class="arrow-link" href="merch.html">All postcards, floor 2</a></div>
     </section>
 
     <!-- Shows: a subway line around the world -->
     <section class="shows" id="shows" aria-labelledby="shows-title">
       <div class="wrap">
-        <span class="label">Shows</span>
         <h2 id="shows-title">Find me near you.</h2>
         <p class="shows__hint">Pick your stop.</p>
         <p class="line-sign"><b aria-hidden="true">X</b>Uptown and the world · all stops</p>

@@ -157,6 +157,14 @@ Use these before inventing new decoration. Each one comes from his songs or his 
 - Fake or placeholder content presented as real. Empty slots show as honest dashed boxes or tasteful drawn paper.
 - Anything that leans on test scores, GPA, awards or math (brand rule from the original brief).
 - Lilac, wax seals and engraved illustration. That's Mitski's world.
+- **The AI-site look** (checked Oct 28, 2026 against published lists of AI design tells):
+  - Pill buttons, round glossy "coin" buttons with radial gradients, and glowing hover halos. Buttons and toggles here are square plates: brass outline, flat fill, lit = flat sunset, no glow, no grow-on-hover. Round is only for things that are round in real life (records, push pins, subway bullets, postmarks).
+  - Frosted glass (`backdrop-filter`) on headers, bars or panels. Use a solid ink fill and a brass hairline.
+  - Rounded cards in a grid. Photos are prints with a paper border and square corners.
+  - Dashboard stat boxes. Numbers go on something from his world, like a receipt.
+  - Purple or blue gradient placeholders. Empty slots are flat dark paper with a dashed line.
+  - Tracked uppercase eyebrow labels above every heading, a script or coloured accent word inside a headline, "A · B · C" meta strings, and arrows on every link.
+  - Sparkles, pulsing "live" dots, pulsing play buttons and drifting light blobs.
 
 ---
 
