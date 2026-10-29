@@ -254,6 +254,24 @@
     setTimeout(showPop, 8000); // 8 seconds in
   }
 
+  /* ---------- Phones: the floors fold into one button ---------- */
+  const header = $(".site-header"), nav = $(".site-nav", header || document);
+  if (header && nav) {
+    nav.id = nav.id || "floors";
+    const here = $(".floor[aria-current] i", nav);
+    const btn = document.createElement("button");
+    btn.className = "floors-btn";
+    btn.type = "button";
+    btn.setAttribute("aria-controls", nav.id);
+    btn.setAttribute("aria-expanded", "false");
+    btn.innerHTML = `<i aria-hidden="true">${here ? here.textContent : "L"}</i>Floors`;
+    header.insertBefore(btn, nav);
+    const open = (on) => { header.classList.toggle("is-open", on); btn.setAttribute("aria-expanded", on); };
+    btn.addEventListener("click", () => open(!header.classList.contains("is-open")));
+    document.addEventListener("click", (e) => { if (!header.contains(e.target) || e.target.closest(".floor")) open(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") open(false); });
+  }
+
   /* ---------- Footer: the building directory ---------- */
   const footer = $(".site-footer");
   if (footer) {

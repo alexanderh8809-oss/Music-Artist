@@ -53,7 +53,7 @@ Why this concept:
 - The building's sign-in register. A bone **pass** with a punched hole (what Founding Fans get, spots left, the sign-up) beside a **ledger page** with a red margin rule: one numbered line per fan, names in pen. The first 1,000 signups are numbered for life by the Google Sheet. Linked from the home page ("The first 1,000."), the sign-up dialog and pop-up, and the footer directory.
 
 ### Floor 5: Industry (`contact.html`)
-- The office upstairs. The form is a **"While you were out" phone-message slip** printed in marker red, with ruled lines to write on and the topic as tick boxes. Beside it, an "At a glance" fact sheet filled from `content/config.js`. In the header as floor 4 and in the footer. On phones the five floors fit because the wordmark stacks on two lines.
+- The office upstairs. The form is a **"While you were out" phone-message slip** printed in marker red, with ruled lines to write on and the topic as tick boxes. Beside it, an "At a glance" fact sheet filled from `content/config.js`. In the header as floor 4 and in the footer. On phones the floors fold into one **Floors** button (lit with the floor you're on) that drops the panel open; the side dock, the hero's record and mini TikTok are hidden, the fan wall runs one belt, and empty show stops say nothing. Desktop is unchanged.
 
 ### Basement: 404 page
 - "Stuck between floors." Elevator doors are slightly open, with a button back to the lobby.

@@ -51,6 +51,7 @@
 .sleeve__buy { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .sleeve__price { font-family: var(--f-head); font-size: 34px; }
 @media (min-width: 720px) { .sleeve { grid-template-columns: 1fr auto; align-items: end; } .sleeve__fan { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .sleeve { rotate: 0deg; } .sleeve__fan span { width: 56px; } } /* the tilt pushed it past a phone's edge */
 .shop-note { color: var(--bone-dim); font-size: 15px; margin: 28px auto 72px; }
 
 /* reduced motion or no 3D: a plain row of cards you scroll */

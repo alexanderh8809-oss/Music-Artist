@@ -91,6 +91,11 @@
   .stage__bio .btn { width: 100%; }
   .stage__cue { display: none; }
 }
+@media (max-width: 560px) {
+  /* small phones: drop the record and the mini TikTok so the photo stands alone */
+  .stage__record, .mini { display: none; }
+  .stage__door { left: 50%; width: min(62vw, 300px); }
+}
 
 /* intro: the photo spins in on grain, then the screen opens */
 .intro { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: #0b0b0c; pointer-events: none;
@@ -164,6 +169,10 @@
 .line button small { font-size: 13px; letter-spacing: .14em; color: var(--verdigris); margin-left: auto; white-space: nowrap; padding-left: 10px; }
 .line button:hover, .line button[aria-expanded="true"] { color: var(--bone); }
 .line button[aria-expanded="true"] i::before { transform: scale(1.35); border-color: var(--sunset); }
+@media (max-width: 560px) {
+  .line button { min-height: 46px; font-size: 18px; }
+  .line button small.is-empty { display: none; }
+}
 @media (min-width: 900px) {
   .line { grid-auto-flow: column; grid-auto-columns: 1fr; }
   .line::before { left: 25px; right: 25px; top: 21px; bottom: auto; width: auto; height: 8px; }
@@ -257,6 +266,7 @@
 .fanwall__or a { color: var(--bone); }
 .belts { --h: 200px; display: grid; gap: 22px; margin-top: 40px; min-height: calc(var(--h) * 2 + 140px); }
 @media (min-width: 760px) { .belts { --h: 250px; gap: 28px; } }
+@media (max-width: 560px) { .belts { min-height: calc(var(--h) + 50px); } } /* one belt on phones until the wall fills up */
 .belt { overflow: hidden; padding: 14px 0; }
 .belt__track { display: flex; width: max-content; animation: belt var(--dur, 70s) linear infinite; }
 .belt--back .belt__track { animation-direction: reverse; }

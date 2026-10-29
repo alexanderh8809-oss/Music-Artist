@@ -104,13 +104,26 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 400; line-height: 1; margi
 .floor[aria-current="page"] i { /* the lit button */
   color: var(--ink); background: var(--sunset); border-color: var(--sunset);
 }
+.floors-btn { display: none; }
 @media (max-width: 560px) {
-  .site-header { gap: 8px; }
-  /* five floors on a phone: the name stacks on two lines, like a building sign */
-  .wordmark { font-size: 18px; line-height: 1; white-space: normal; max-width: 4.6em; }
-  .site-nav { gap: 0; }
-  .floor { flex-direction: column; gap: 2px; padding: 4px; font-size: 10px; letter-spacing: .1em; }
-  .floor i { width: 26px; height: 26px; }
+  /* phones: the floors fold into one button, lit with the floor you're on (js/site.js) */
+  .floors-btn {
+    display: inline-flex; align-items: center; gap: 10px; margin-left: auto; padding: 8px 0; border: 0; background: none; color: var(--bone);
+    font-family: var(--f-label); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 14px;
+  }
+  .floors-btn i {
+    display: grid; place-items: center; width: 30px; height: 30px; font-style: normal; font-family: var(--f-head); font-stretch: normal; letter-spacing: 0; font-size: 15px;
+    color: var(--ink); background: var(--sunset); border: 1px solid var(--sunset);
+  }
+  .site-header.is-open .floors-btn i { color: var(--bone); background: var(--ink-2); border-color: rgba(184,146,90,.55); }
+  .site-nav {
+    display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0;
+    padding: 4px var(--gutter) 14px; background: var(--ink); border-bottom: 1px solid rgba(184,146,90,.22); box-shadow: 0 24px 40px rgba(0,0,0,.5);
+  }
+  .site-header.is-open .site-nav { display: flex; }
+  .floor { gap: 16px; padding: 12px 0; font-size: 17px; }
+  .floor + .floor { border-top: 1px solid rgba(184,146,90,.14); }
+  .floor i { width: 34px; height: 34px; font-size: 16px; }
   .site-nav .hide-sm { display: none; }
 }
 
@@ -343,12 +356,7 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 400; line-height: 1; margi
 }
 .dock__btn:hover, .dock__btn:focus-visible { color: var(--ink); background: var(--bone); border-color: var(--bone); }
 .dock__btn:hover span, .dock__btn:focus-visible span { opacity: 1; translate: 0 -50%; }
-@media (max-width: 560px) {
-  .dock { left: auto; right: max(8px, env(safe-area-inset-right)); }
-  .dock__btn { width: 42px; height: 42px; }
-  .dock__btn svg { width: 18px; height: 18px; }
-  .dock__btn span { display: none; }
-}
+@media (max-width: 560px) { .dock { display: none; } } /* on phones it covered the page; the links live in the footer */
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

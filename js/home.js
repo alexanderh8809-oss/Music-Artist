@@ -165,7 +165,8 @@
   };
   const belts = $(".belts");
   function buildBelts() {
-    const rows = [items.filter((_, i) => i % 2 === 0), items.filter((_, i) => i % 2 === 1)];
+    const one = pieces.length < 8 && matchMedia("(max-width: 560px)").matches;
+    const rows = one ? [items] : [items.filter((_, i) => i % 2 === 0), items.filter((_, i) => i % 2 === 1)];
     belts.innerHTML = rows.map((row, r) => {
       let set = row.slice();
       while (set.length < 8) set = set.concat(row); // long enough to cross a wide screen
@@ -198,7 +199,7 @@
   line.innerHTML = regions.map((reg, i) => {
     const n = (reg.dates || []).length;
     return `<li><button type="button" data-i="${i}" aria-expanded="false" aria-controls="stop-panel">
-      <i aria-hidden="true"></i>${esc(reg.name)}<small>${n ? `${n} show${n > 1 ? "s" : ""}` : "No dates yet"}</small></button></li>`;
+      <i aria-hidden="true"></i>${esc(reg.name)}<small${n ? "" : ' class="is-empty"'}>${n ? `${n} show${n > 1 ? "s" : ""}` : "No dates yet"}</small></button></li>`;
   }).join("");
   line.addEventListener("click", (e) => {
     const b = e.target.closest("button[data-i]");
