@@ -33,6 +33,9 @@ Go to **https://alexanderh8809-oss.github.io/Music-Artist/admin.html** and paste
 
 ---
 
-**If you change Code.gs later:** Deploy → **Manage deployments** → ✏️ edit → Version: **New version** → Deploy. The URL stays the same.
+**If you change Code.gs later:**
+1. Paste the new code over the old (step 2), and **Save**.
+2. Run **setup** again (step 3). It adds any new columns and tabs, and keeps all your data. If Google asks for permission again, allow it. The October 29, 2026 version asks to **send email as you**, so industry messages reach your inbox.
+3. Deploy → **Manage deployments** → ✏️ edit → Version: **New version** → Deploy. The URL stays the same.
 
-**Privacy:** the site only stores what's needed: emails people type in, plus anonymous visit info: a random visitor ID kept in their browser, the page, where they came from, time zone and device type. No names, no IP addresses, no third-party trackers.
+**Privacy:** the site only stores what's needed: emails people type in, a name only if a Founding Fan chooses to sign the register, messages sent from the Industry page, plus anonymous visit info: a random visitor ID kept in their browser, the page, where they came from, time zone and device type. No IP addresses, no third-party trackers.

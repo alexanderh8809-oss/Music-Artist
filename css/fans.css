@@ -1,0 +1,55 @@
+/* ============================================================
+   Founding Fans: the building's sign-in register. The first 1,000
+   on the mailing list get a numbered line, for life.
+   ============================================================ */
+.fans-head { padding: 56px var(--gutter) 8px; }
+.fans-head h1 { font-size: clamp(52px, 13vw, 116px); margin: 0 0 12px; line-height: .9; }
+.fans-head p { color: var(--bone-dim); max-width: 46ch; margin: 0; }
+
+.fans { display: grid; gap: 40px; padding-top: 36px; padding-bottom: 88px; align-items: start; }
+@media (min-width: 900px) { .fans { grid-template-columns: minmax(300px, 400px) 1fr; gap: 56px; } }
+
+/* the pass: a bone ticket with a punched hole */
+.pass { --bg: var(--bone); --u: 4px; padding: 34px 26px 26px; color: var(--ink); rotate: -.8deg; scroll-margin-top: calc(var(--header-h) + 24px); }
+.pass > * { position: relative; z-index: 2; }
+.pass::after, .register::after { opacity: .6; } /* lighter age, so every name reads */
+.pass::before { -webkit-mask: radial-gradient(circle 9px at 50% 16px, transparent 98%, #000); mask: radial-gradient(circle 9px at 50% 16px, transparent 98%, #000); }
+.pass .label { color: #a3302a; }
+.pass h2 { font-size: clamp(36px, 8vw, 46px); margin: 6px 0 4px; }
+.pass__count { margin: 0 0 18px; font-family: var(--f-label); font-stretch: 62%; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; font-size: 15px; color: #4a4339; }
+.pass__count b { font-family: var(--f-head); font-weight: 400; font-stretch: normal; letter-spacing: 0; text-transform: none; font-size: 30px; color: var(--ink); margin-right: 4px; }
+.pass__perks { list-style: none; margin: 0 0 22px; padding: 14px 0 0; border-top: 1.5px dashed #c9bea9; display: grid; gap: 8px; color: #3a342c; font-size: 16px; counter-reset: perk; }
+.pass__perks li { display: flex; gap: 10px; counter-increment: perk; }
+.pass__perks li::before { content: counter(perk, decimal-leading-zero); flex: none; padding-top: 3px; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; letter-spacing: .1em; font-size: 12px; color: #a3302a; }
+
+/* the register: a ledger page with a red margin rule */
+.register {
+  --bg: #efe6d2; --u: 4px; --line: 40px; --stain-size: 160px 160px; --stain-at: 88% 6%;
+  padding: 30px clamp(18px, 4vw, 40px) 26px; color: var(--ink); rotate: .4deg;
+}
+.register > * { position: relative; z-index: 2; }
+.register h2 { font-size: clamp(30px, 6vw, 44px); }
+.register__note { margin: 8px 0 18px; color: #4a4339; font-size: 15px; }
+.register__head, .register__lines li { display: grid; grid-template-columns: 72px 1fr; align-items: end; }
+.register__head {
+  padding-bottom: 6px; border-bottom: 2px solid #1f2a44;
+  font-family: var(--f-label); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 13px; color: #1f2a44;
+}
+.register__lines {
+  list-style: none; margin: 0; padding: 0; max-height: min(64vh, 640px); overflow-y: auto; overscroll-behavior: contain;
+  background: linear-gradient(90deg, transparent 63px, rgba(163,48,42,.55) 63px, rgba(163,48,42,.55) 65px, transparent 65px);
+}
+.register__lines li { min-height: var(--line); border-bottom: 1px solid rgba(31,42,68,.22); padding-bottom: 4px; }
+.register__lines .n { font-family: var(--f-label); font-stretch: 62%; font-weight: 700; letter-spacing: .08em; font-size: 15px; color: #6b6255; padding-bottom: 3px; }
+.register__lines .who { padding-left: 14px; font-family: var(--f-scrap); font-size: 22px; line-height: 1.2; color: #1f2a44; overflow-wrap: anywhere; }
+.register__lines .who--plain { font-family: var(--f-label); font-stretch: 62%; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; font-size: 13px; color: #8a8072; padding-bottom: 4px; }
+.register__lines .who--open { color: #9a8f7e; }
+.register__lines .is-me .n { color: #a3302a; }
+.register__lines .is-me .who::after { content: "you"; margin-left: 10px; font-family: var(--f-label); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 12px; color: #a3302a; }
+.register__more { padding: 14px 0 0; margin: 0; color: #4a4339; font-size: 15px; }
+
+@media (max-width: 560px) {
+  .pass, .register { rotate: 0deg; }
+  .register__head, .register__lines li { grid-template-columns: 60px 1fr; }
+  .register__lines { background-position: -12px 0; }
+}

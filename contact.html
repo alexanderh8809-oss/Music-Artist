@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Industry · Xander Hudson</title>
+  <meta name="description" content="Booking, labels, management, publishing, sync, brands and press: contact Xander Hudson.">
+  <meta name="theme-color" content="#131417">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..800&family=Young+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/contact.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="./">Xander Hudson</a>
+    <nav class="site-nav" aria-label="Floors">
+      <a class="floor" href="./"><i>L</i>Lobby</a>
+      <a class="floor" href="journey.html"><i>1</i>Journey</a>
+      <a class="floor" href="merch.html"><i>2</i>Postcards</a>
+      <a class="btn btn--hit btn--sm hide-sm" href="#join" data-join>Join</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap office-head">
+      <h1>Industry.</h1>
+      <p>For booking, labels, management, publishing and sync, brand partnerships and press. Messages here go straight to Xander.</p>
+    </section>
+
+    <div class="wrap office">
+      <!-- The message slip -->
+      <section class="slip paper" aria-labelledby="slip-title">
+        <h2 id="slip-title">While you were out</h2>
+        <p class="slip__to"><span>For</span> Xander Hudson</p>
+        <form class="slip__form" novalidate>
+          <fieldset class="slip__about">
+            <legend>About</legend>
+            <label><input type="radio" name="about" value="Booking"><span>Booking &amp; shows</span></label>
+            <label><input type="radio" name="about" value="Label"><span>Label / A&amp;R</span></label>
+            <label><input type="radio" name="about" value="Management"><span>Management</span></label>
+            <label><input type="radio" name="about" value="Publishing & sync"><span>Publishing &amp; sync</span></label>
+            <label><input type="radio" name="about" value="Brand partnership"><span>Brand partnership</span></label>
+            <label><input type="radio" name="about" value="Press"><span>Press</span></label>
+            <label><input type="radio" name="about" value="Other"><span>Something else</span></label>
+          </fieldset>
+          <div class="slip__grid">
+            <label class="line"><span>From</span><input name="name" autocomplete="name" required placeholder="Your name"></label>
+            <label class="line"><span>Of</span><input name="company" autocomplete="organization" placeholder="Company"></label>
+            <label class="line"><span>Role</span><input name="role" autocomplete="organization-title" placeholder="A&amp;R, agent, editor..."></label>
+            <label class="line"><span>Email</span><input name="email" type="email" autocomplete="email" inputmode="email" required placeholder="you@company.com"></label>
+            <label class="line"><span>Phone</span><input name="phone" type="tel" autocomplete="tel" placeholder="Optional"></label>
+          </div>
+          <label class="slip__msg"><span>Message</span><textarea name="message" rows="6" required placeholder="What you have in mind, dates, links..."></textarea></label>
+          <!-- left empty by people; bots fill it in -->
+          <label class="visually-hidden" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+          <div class="slip__send">
+            <button class="btn btn--hit" type="submit">Send message</button>
+            <p class="form-msg" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+
+      <!-- At a glance: the numbers and links an executive looks for first -->
+      <aside class="glance" aria-labelledby="glance-title">
+        <h2 id="glance-title" class="label">At a glance</h2>
+        <dl class="glance__list"></dl>
+        <p class="glance__direct">Prefer email? <a class="glance__mail" href="#"></a></p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="content/config.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/contact.js"></script>
+</body>
+</html>

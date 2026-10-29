@@ -6,6 +6,11 @@ window.SITE = {
   // Music-only contact email (shown in the footer)
   contactEmail: "music@xanderhudson.com",
 
+  // Industry page (contact.html): where labels, booking and press can email you.
+  // Leave "" to use contactEmail. Messages sent from the page's form go to the
+  // Google Sheet's "Inquiries" tab and to the Google account that owns the Sheet.
+  industryEmail: "",
+
   // Link-in-bio links. Leave "" to hide a button.
   // Spotify: your artist page, e.g. "https://open.spotify.com/artist/..."
   // Instagram: e.g. "https://www.instagram.com/yourname"

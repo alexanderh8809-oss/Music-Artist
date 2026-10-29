@@ -148,6 +148,9 @@
 .songs__rail .pcard:nth-child(even) { rotate: 1.2deg; translate: 0 10px; }
 
 /* ---------- Shows: a subway line ---------- */
+.founders { padding: 88px 0 0; }
+.founders h2 { font-size: clamp(40px, 9vw, 72px); margin: 0 0 14px; }
+.founders p { color: var(--bone-dim); max-width: 46ch; margin: 0 0 22px; }
 .shows { padding: 72px 0 96px; }
 .line { list-style: none; margin: 34px 0 26px; padding: 0; position: relative; display: grid; gap: 0; }
 .line::before { content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; width: 8px; border-radius: 4px; background: var(--verdigris); }

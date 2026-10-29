@@ -1,27 +1,43 @@
 /* ============================================================
    XANDER HUDSON - website backend (Google Apps Script)
 
-   Lives inside a Google Sheet. It does three jobs:
-   1. Saves every mailing-list email to the "Subscribers" tab.
+   Lives inside a Google Sheet. It does four jobs:
+   1. Saves every mailing-list email to the "Subscribers" tab and
+      numbers it. The first 1,000 are Founding Fans, for life.
    2. Saves every visit and click to the "Events" tab.
-   3. Sends the private dashboard (admin.html) its numbers,
-      but only when the request carries your admin key.
+   3. Saves industry messages to the "Inquiries" tab and emails
+      them to you.
+   4. Sends the private dashboard (admin.html) its numbers,
+      but only when the request carries your admin key. The
+      Founding Fans register (names only, never emails) is public.
 
    Setup steps are in backend/SETUP.md.
    ============================================================ */
 
 const TZ = "America/New_York";
-const SUBS = "Subscribers", EVENTS = "Events";
-const SUB_HEAD = ["Time", "Email", "Source", "Page", "Visitor", "How"];
+const SUBS = "Subscribers", EVENTS = "Events", INQ = "Inquiries";
+const FOUNDING = 1000; // the first this-many signups are Founding Fans, for life
+// Fan # and Founding never change once written. "Show on wall": type No to hide a name from the register.
+const SUB_HEAD = ["Time", "Email", "Source", "Page", "Visitor", "How", "Fan #", "Founding", "Wall name", "Show on wall", "Key"];
+const INQ_HEAD = ["Time", "Name", "Company", "Role", "Email", "Phone", "About", "Message", "Page", "Source", "Visitor"];
 const EV_HEAD = ["Time", "Visitor", "Session", "Event", "Page", "Source", "Referrer", "Detail", "Device", "Timezone", "Language", "Screen"];
 
-/* Run this once from the editor (Run > setup). It makes the tabs and your admin key. */
+/* Run this from the editor (Run > setup) once, and again after pasting a new version.
+   It makes the tabs and your admin key, and numbers anyone who joined before fan numbers existed. */
 function setup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  [[SUBS, SUB_HEAD], [EVENTS, EV_HEAD]].forEach(([name, head]) => {
+  [[SUBS, SUB_HEAD], [EVENTS, EV_HEAD], [INQ, INQ_HEAD]].forEach(([name, head]) => {
     const sh = ss.getSheetByName(name) || ss.insertSheet(name);
-    if (sh.getLastRow() === 0) { sh.appendRow(head); sh.setFrozenRows(1); sh.getRange(1, 1, 1, head.length).setFontWeight("bold"); }
+    sh.getRange(1, 1, 1, head.length).setValues([head]).setFontWeight("bold");
+    sh.setFrozenRows(1);
   });
+  const subs = ss.getSheetByName(SUBS), n = subs.getLastRow() - 1;
+  if (n > 0) {
+    const range = subs.getRange(2, 7, n, 2), vals = range.getValues();
+    vals.forEach((v, i) => { if (!v[0]) { v[0] = i + 1; v[1] = i + 1 <= FOUNDING ? "Yes" : "No"; } });
+    range.setValues(vals);
+  }
+  MailApp.getRemainingDailyQuota(); // asks for permission to email you industry messages
   const props = PropertiesService.getScriptProperties();
   if (!props.getProperty("ADMIN_KEY")) props.setProperty("ADMIN_KEY", Utilities.getUuid().replace(/-/g, "").slice(0, 20));
   Logger.log("Your admin key (paste it into the dashboard): " + props.getProperty("ADMIN_KEY"));
@@ -36,6 +52,8 @@ function doPost(e) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     if (body.type === "signup") return json(addSubscriber(ss, body));
+    if (body.type === "wall") return json(signWall(ss, body));
+    if (body.type === "inquiry") return json(addInquiry(ss, body));
     if (body.type === "events" && Array.isArray(body.events)) {
       const rows = body.events.slice(0, 50).map(eventRow);
       if (rows.length) {
@@ -55,12 +73,69 @@ function addSubscriber(ss, b) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "email" };
   const sh = ss.getSheetByName(SUBS);
   const dupe = sh.getRange("B:B").createTextFinder(email).matchEntireCell(true).findNext();
-  if (dupe) return { ok: true, already: true };
-  sh.appendRow([new Date(), email, clip(b.source, 40), clip(b.page, 80), clip(b.visitor, 40), clip(b.how, 20)]);
+  if (dupe) {
+    const fan = Number(sh.getRange(dupe.getRow(), 7).getValue()) || dupe.getRow() - 1;
+    return { ok: true, already: true, fan, founding: fan <= FOUNDING };
+  }
+  // numbered in the order they joined; under the lock, so no two people get the same number
+  const fan = sh.getLastRow(), founding = fan <= FOUNDING;
+  const key = Utilities.getUuid().replace(/-/g, "");
+  sh.appendRow([new Date(), email, clip(b.source, 40), clip(b.page, 80), clip(b.visitor, 40), clip(b.how, 20),
+    fan, founding ? "Yes" : "No", "", "", key]);
+  if (founding) CacheService.getScriptCache().remove("wall");
   // the signup also counts as an event, so the dashboard can see where it happened
   const ev = ss.getSheetByName(EVENTS);
   ev.appendRow(eventRow({ event: "join_list", visitor: b.visitor, session: b.session, page: b.page, source: b.source, detail: b.how }));
+  return { ok: true, fan, founding, key: founding ? key : "" };
+}
+
+/* A Founding Fan puts a name in the register. The key came back with their signup,
+   so only the browser that joined can name that line. */
+function signWall(ss, b) {
+  const name = clip(b.name, 40).replace(/[^\p{L}\p{N} @._'-]/gu, "").replace(/\s+/g, " ").trim().slice(0, 24);
+  const key = clip(b.key, 40);
+  if (!name || !/^[0-9a-f]{32}$/.test(key)) return { ok: false };
+  const sh = ss.getSheetByName(SUBS);
+  const hit = sh.getRange("K:K").createTextFinder(key).matchEntireCell(true).findNext();
+  if (!hit || sh.getRange(hit.getRow(), 8).getValue() !== "Yes") return { ok: false };
+  sh.getRange(hit.getRow(), 9, 1, 2).setValues([[name, "Yes"]]);
+  CacheService.getScriptCache().remove("wall");
+  return { ok: true, name };
+}
+
+/* A message from the Industry page: saved to the sheet and emailed to you, with Reply going to them. */
+function addInquiry(ss, b) {
+  if (b.website) return { ok: true }; // the hidden field only bots fill in
+  const email = clip(b.email, 120).trim();
+  const f = { name: clip(b.name, 80).trim(), company: clip(b.company, 100).trim(), role: clip(b.role, 60).trim(), email,
+    phone: clip(b.phone, 40).trim(), about: clip(b.about, 40), message: clip(b.message, 4000).trim() };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !f.name || f.message.length < 2) return { ok: false, error: "fields" };
+  ss.getSheetByName(INQ).appendRow([new Date(), f.name, f.company, f.role, f.email, f.phone, f.about, f.message,
+    clip(b.page, 80), clip(b.source, 40), clip(b.visitor, 40)]);
+  ss.getSheetByName(EVENTS).appendRow(eventRow({ event: "industry_inquiry", visitor: b.visitor, session: b.session, page: b.page, source: b.source, detail: f.about }));
+  try {
+    const to = PropertiesService.getScriptProperties().getProperty("NOTIFY_EMAIL") || Session.getEffectiveUser().getEmail();
+    MailApp.sendEmail({
+      to, replyTo: email,
+      subject: "Industry inquiry: " + (f.about || "General") + " from " + (f.company || f.name),
+      body: [f.name + (f.role ? ", " + f.role : "") + (f.company ? ", " + f.company : ""), email + (f.phone ? " / " + f.phone : ""),
+        "About: " + (f.about || "General"), "", f.message, "", "Sent from the Industry page of your website. Reply to this email to answer them."].join("\n")
+    });
+  } catch (err) { /* it's still in the Inquiries tab */ }
   return { ok: true };
+}
+
+/* The Founding Fans register: line numbers and names only, never emails. Cached for two minutes. */
+function wall() {
+  const cache = CacheService.getScriptCache(), hit = cache.get("wall");
+  if (hit) return JSON.parse(hit);
+  const rows = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SUBS).getDataRange().getValues().slice(1);
+  const out = {
+    ok: true, limit: FOUNDING, taken: Math.min(rows.length, FOUNDING),
+    names: rows.filter((r) => r[7] === "Yes" && r[8] && String(r[9]).toLowerCase() !== "no").map((r) => ({ n: Number(r[6]), name: String(r[8]) }))
+  };
+  cache.put("wall", JSON.stringify(out), 120);
+  return out;
 }
 
 function eventRow(x) {
@@ -71,6 +146,7 @@ function eventRow(x) {
 /* ---------- Reads for the private dashboard ---------- */
 function doGet(e) {
   const p = e.parameter || {};
+  if (p.wall) return json(wall());
   const key = PropertiesService.getScriptProperties().getProperty("ADMIN_KEY");
   if (!key || p.key !== key) return json({ ok: false, error: "key" });
   const days = Math.min(365, Math.max(1, Number(p.days) || 30));
@@ -85,6 +161,8 @@ function stats(days) {
   const ev = ss.getSheetByName(EVENTS).getDataRange().getValues().slice(1).filter((r) => r[0] instanceof Date && r[0] >= since);
   const subs = ss.getSheetByName(SUBS).getDataRange().getValues().slice(1).filter((r) => r[0] instanceof Date);
   const subsIn = subs.filter((r) => r[0] >= since);
+  const inqSheet = ss.getSheetByName(INQ);
+  const inq = (inqSheet ? inqSheet.getDataRange().getValues().slice(1) : []).filter((r) => r[0] instanceof Date);
 
   const count = (rows, fn) => {
     const m = {};
@@ -125,6 +203,8 @@ function stats(days) {
       visitors: visitors.size,
       signups: subsIn.length,
       subscribersAllTime: subs.length,
+      founding: subs.filter((r) => r[7] === "Yes").length,
+      inquiries: inq.filter((r) => r[0] >= since).length,
       spotify: of("outbound_click").filter((r) => r[7] === "spotify").length,
       tiktok: of("outbound_click").filter((r) => r[7] === "tiktok").length,
       medianSeconds: leaves.length ? leaves[Math.floor(leaves.length / 2)] : 0
@@ -140,7 +220,8 @@ function stats(days) {
     journey,
     popup: { shown: of("popup_shown").length, joined: subsIn.filter((r) => r[5] === "popup").length, dismissed: of("popup_dismiss").length },
     scroll: count(of("scroll_depth"), (r) => r[4] + " \u00b7 " + r[7] + "%"),
-    subscribers: subs.slice(-100).reverse().map((r) => ({ time: r[0].toISOString(), email: r[1], source: r[2], page: r[3], how: r[5] })),
+    subscribers: subs.slice(-100).reverse().map((r) => ({ time: r[0].toISOString(), email: r[1], source: r[2], page: r[3], how: r[5], fan: r[6], founding: r[7] === "Yes", name: r[8] })),
+    inquiries: inq.slice(-50).reverse().map((r) => ({ time: r[0].toISOString(), name: r[1], company: r[2], role: r[3], email: r[4], phone: r[5], about: r[6], message: r[7] })),
     recent: ev.slice(-40).reverse().map((r) => ({ time: r[0].toISOString(), event: r[3], page: r[4], source: r[5], detail: r[7], place: place(r[9]) }))
   };
 }

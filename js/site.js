@@ -117,14 +117,50 @@
 
   /* ---------- Mailing list ---------- */
   const joined = () => store("xh_joined") === "1";
-  function saveSubscriber(email, how) {
-    // no-cors: the sheet saves it, the browser just can't read the reply
-    return fetch(API, {
-      method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ type: "signup", email, how, ...base })
+  // posts to the sheet and reads its reply ({} if an older backend doesn't send one)
+  const send = (body) => fetch(API, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ ...body, ...base }) })
+    .then((r) => r.json()).catch((err) => { if (err instanceof SyntaxError) return {}; throw err; });
+  window.XH.send = send;
+  window.XH.api = API;
+  const pad = (n) => String(n).padStart(3, "0");
+  window.XH.pad = pad;
+
+  // After joining: the first 1,000 get their Founding Fan number, and can sign the register.
+  function welcome(msg, res, onDone) {
+    const fan = Number(res.fan) || 0;
+    if (fan) store("xh_fan", String(fan));
+    if (!res.founding || !fan) {
+      msg.innerHTML = res.already ? "You're already on the list." : `You're on the list. <span class="scrap">see you soon</span>`;
+      onDone && onDone();
+      return;
+    }
+    msg.innerHTML = `<b>${res.already ? "You're already" : "You're"} Founding Fan No.&nbsp;${pad(fan)}.</b> Early access, for life.`;
+    if (!res.key) { onDone && onDone(); return; }
+    store("xh_fan_key", res.key);
+    const sign = document.createElement("form");
+    sign.className = "field sign";
+    sign.innerHTML = `
+      <label for="sign-${fan}">Put your name in the register? Anyone can see it on the Founding Fans page.</label>
+      <input id="sign-${fan}" name="name" maxlength="24" autocomplete="nickname" placeholder="First name or @handle">
+      <div class="sign__row"><button class="btn btn--sig btn--sm" type="submit">Sign it</button><button class="sign__skip" type="button">No thanks</button></div>`;
+    msg.after(sign);
+    const done = (text) => { sign.remove(); if (text) msg.insertAdjacentHTML("beforeend", ` ${text}`); onDone && onDone(); };
+    $(".sign__skip", sign).addEventListener("click", () => done(""));
+    sign.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = sign.name.value.trim();
+      if (!name) return done("");
+      $("button[type=submit]", sign).disabled = true;
+      send({ type: "wall", key: res.key, name }).then((r) => {
+        if (!r.ok) throw 0;
+        done(`<a href="fans.html">See it in the register.</a>`);
+        dispatchEvent(new CustomEvent("xh:signed"));
+      }).catch(() => done("The register didn't take it. Try again later from the Founding Fans page."));
     });
   }
-  // one form, used by both the dialog and the pop-up
+  window.XH.welcome = welcome;
+
+  // one form, used by the dialog, the pop-up and the Founding Fans page
   function wireForm(root, how, onDone) {
     const form = $("form", root), msg = $(".form-msg", root), input = $("input", root), btn = $("button[type=submit]", root);
     form.addEventListener("submit", (e) => {
@@ -137,16 +173,18 @@
         return;
       }
       btn.disabled = true; msg.textContent = "Adding you…";
-      saveSubscriber(email, how).then(() => {
+      send({ type: "signup", email, how }).then((res) => {
+        if (res.ok === false) throw 0;
         store("xh_joined", "1");
         form.hidden = true;
-        msg.innerHTML = `You're on the list. <span class="scrap">see you soon</span>`;
-        onDone && onDone();
+        welcome(msg, res, onDone);
+        dispatchEvent(new CustomEvent("xh:joined", { detail: res }));
       }).catch(() => {
         msg.textContent = "Something went wrong. Try again in a moment."; msg.classList.add("err");
       }).finally(() => { btn.disabled = false; });
     });
   }
+  window.XH.wireForm = wireForm;
   const formHTML = (id) => `
     <form class="field" novalidate>
       <label class="visually-hidden" for="${id}">Email address</label>
@@ -164,7 +202,7 @@
         <span class="label">Admit one</span>
         <button class="dialog__close" type="button" aria-label="Close">&times;</button>
         <h2 id="join-title">Get the next postcard first.</h2>
-        <p>New songs, postcard drops and shows near you.</p>
+        <p>New songs, postcard drops and shows near you. The first 1,000 on the list are <a href="fans.html">Founding Fans</a>, with early access for life.</p>
         ${formHTML("join-email")}
       </div>`;
     document.body.appendChild(d);
@@ -188,7 +226,7 @@
   let pop = null;
   function hidePop() { if (pop) pop.classList.remove("is-in"); }
   function showPop() {
-    if (pop || joined() || editing || page === "admin.html" || page === "404.html") return;
+    if (pop || joined() || editing || ["admin.html", "404.html", "fans.html", "contact.html"].includes(page)) return;
     const until = Number(store("xh_pop_until") || 0);
     if (Date.now() < until) return;
     pop = document.createElement("aside");
@@ -199,9 +237,10 @@
       <button class="pop__close" type="button" aria-label="Close">&times;</button>
       <span class="label">Admit one</span>
       <h2>Get the next postcard first.</h2>
+      <p>The first 1,000 are Founding Fans, for life.</p>
       ${formHTML("pop-email")}`;
     document.body.appendChild(pop);
-    wireForm(pop, "popup", () => setTimeout(hidePop, 2600));
+    wireForm(pop, "popup", () => setTimeout(hidePop, 3600));
     $(".pop__close", pop).addEventListener("click", () => {
       hidePop();
       store("xh_pop_until", String(Date.now() + 7 * 864e5));
@@ -234,11 +273,14 @@
           <li><a href="journey.html"><b>1</b>The Journey</a></li>
           <li><a href="merch.html"><b>2</b>Postcards</a></li>
           <li><a href="./#shows"><b>3</b>Shows</a></li>
+          <li><a href="fans.html"><b>4</b>Founding Fans</a></li>
+          <li><a href="contact.html"><b>5</b>Industry</a></li>
         </ul>
       </div>
       <div>
-        <span class="label">Music inquiries</span>
-        <a href="mailto:${esc(S.contactEmail)}">${esc(S.contactEmail)}</a>
+        <span class="label">Labels, booking, press</span>
+        <a href="contact.html">Industry contact</a><br>
+        <a href="mailto:${esc(S.industryEmail || S.contactEmail)}">${esc(S.industryEmail || S.contactEmail)}</a>
         <div class="socials">${socials}</div>
       </div>
       <small>&copy; ${new Date().getFullYear()} Xander Hudson · New York, NY</small>`;

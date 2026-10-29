@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Founding Fans · Xander Hudson</title>
+  <meta name="description" content="The first 1,000 people on Xander Hudson's mailing list are Founding Fans, with early access for life.">
+  <meta name="theme-color" content="#131417">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..800&family=Young+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/fans.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="./">Xander Hudson</a>
+    <nav class="site-nav" aria-label="Floors">
+      <a class="floor" href="./"><i>L</i>Lobby</a>
+      <a class="floor" href="journey.html"><i>1</i>Journey</a>
+      <a class="floor" href="merch.html"><i>2</i>Postcards</a>
+      <a class="btn btn--hit btn--sm hide-sm" href="#pass">Join</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap fans-head">
+      <h1>Founding Fans.</h1>
+      <p>The first 1,000 people on the mailing list. Your number is yours for life, and so is the early access.</p>
+    </section>
+
+    <div class="wrap fans">
+      <!-- The pass: what it gets you, how many are left, and the sign-up -->
+      <section class="pass paper" id="pass" aria-labelledby="pass-title">
+        <span class="label">Admit one, for life</span>
+        <h2 id="pass-title">Founding Fan</h2>
+        <p class="pass__count" aria-live="polite"><b>1,000</b> spots</p>
+        <!-- What Founding Fans get. Edit these lines to match what you'll really do for them. -->
+        <ul class="pass__perks">
+          <li>Hear new songs before they come out</li>
+          <li>First pick of every postcard drop</li>
+          <li>Tickets before they go on sale</li>
+          <li>Your number in the register, No. 001 to 1,000</li>
+        </ul>
+        <div class="pass__join">
+          <form class="field" novalidate>
+            <label class="visually-hidden" for="fan-email">Email address</label>
+            <input id="fan-email" type="email" name="email" autocomplete="email" inputmode="email" placeholder="you@email.com" required>
+            <button class="btn btn--hit" type="submit">Claim a number</button>
+          </form>
+          <div class="form-msg" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- The register: one numbered line per Founding Fan, in the order they joined -->
+      <section class="register paper" aria-labelledby="register-title">
+        <h2 id="register-title">The register</h2>
+        <p class="register__note">Signed in the order they joined. Names are shown only if the fan added one.</p>
+        <div class="register__head" aria-hidden="true"><span>No.</span><span>Name</span></div>
+        <ol class="register__lines"></ol>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="content/config.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/fans.js"></script>
+</body>
+</html>

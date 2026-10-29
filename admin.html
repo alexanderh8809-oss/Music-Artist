@@ -138,8 +138,8 @@
     const niceDate = (s) => (s ? new Date(s + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "");
     const when = (iso) => new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
     const linkName = (n) => ({ spotify: "Spotify", tiktok: "TikTok", instagram: "Instagram", youtube: "YouTube", tickets: "Tickets" }[n] || (n.startsWith("buy_") ? "Buy: " + n.slice(4).replace(/-/g, " ") : n));
-    const pageName = (p) => ({ "index.html": "Lobby (home)", "journey.html": "Journey", "merch.html": "Postcards" }[p] || p);
-    const eventName = (e) => ({ visit: "Visited", outbound_click: "Clicked", join_list: "Joined the list", popup_shown: "Saw the pop-up", popup_dismiss: "Closed the pop-up", open_join: "Opened sign-up", song_play: "Played a song", postcard_flip: "Flipped a postcard", sound_on: "Turned sound on", journey_stage: "Journey stage", region_open: "Checked shows", rack_spin: "Spun the rack", scroll_depth: "Scrolled", leave: "Left after (sec)" }[e] || e);
+    const pageName = (p) => ({ "index.html": "Lobby (home)", "journey.html": "Journey", "merch.html": "Postcards", "fans.html": "Founding Fans", "contact.html": "Industry" }[p] || p);
+    const eventName = (e) => ({ visit: "Visited", outbound_click: "Clicked", join_list: "Joined the list", popup_shown: "Saw the pop-up", popup_dismiss: "Closed the pop-up", open_join: "Opened sign-up", song_play: "Played a song", postcard_flip: "Flipped a postcard", sound_on: "Turned sound on", journey_stage: "Journey stage", region_open: "Checked shows", rack_spin: "Spun the rack", scroll_depth: "Scrolled", leave: "Left after (sec)", industry_inquiry: "Sent an industry message" }[e] || e);
 
     function render(d) {
       const t = d.totals;
@@ -164,6 +164,7 @@
           ${tile("People", fmt(t.visitors), "different visitors")}
           ${tile("New signups", fmt(t.signups), pct(t.signups, t.visitors) + " of people")}
           ${tile("Mailing list", fmt(t.subscribersAllTime), "all time")}
+          ${t.founding != null ? tile("Founding fans", fmt(t.founding), "of 1,000, for life") : ""}
           ${tile("Spotify clicks", fmt(t.spotify))}
           ${tile("TikTok clicks", fmt(t.tiktok))}
           ${tile("Typical visit", mins, "median time on a page")}
@@ -190,9 +191,15 @@
 
           <section class="card card--wide"><h2>Mailing list</h2><p>Newest first. The full list is in the Google Sheet.</p>
             <div class="scroller">${d.subscribers.length ? `<table>
-              <thead><tr><th>Email</th><th>Joined</th><th>Came from</th><th>Where</th></tr></thead>
-              <tbody>${d.subscribers.map((s) => `<tr><td>${esc(s.email)}</td><td>${esc(when(s.time))}</td><td>${esc(s.source)}</td><td>${esc(s.how === "popup" ? "Pop-up" : "Join button")} · ${esc(pageName(s.page))}</td></tr>`).join("")}</tbody>
+              <thead><tr><th>No.</th><th>Email</th><th>Joined</th><th>Came from</th><th>Where</th></tr></thead>
+              <tbody>${d.subscribers.map((s) => `<tr><td>${s.fan ? esc(s.fan) + (s.founding ? " ★" : "") + (s.name ? "<br><small>" + esc(s.name) + "</small>" : "") : ""}</td><td>${esc(s.email)}</td><td>${esc(when(s.time))}</td><td>${esc(s.source)}</td><td>${esc(s.how === "popup" ? "Pop-up" : s.how === "fans" ? "Founding Fans page" : "Join button")} · ${esc(pageName(s.page))}</td></tr>`).join("")}</tbody>
             </table>` : `<p class="empty">No one yet. Share the link with ?utm_source=tiktok on the end so you can see which posts bring people in.</p>`}</div></section>
+
+          ${d.inquiries ? `<section class="card card--wide"><h2>Industry messages</h2><p>From the Industry page, newest first. Each one was also emailed to you; reply there.</p>
+            <div class="scroller">${d.inquiries.length ? `<table>
+              <thead><tr><th>When</th><th>About</th><th>From</th><th>Message</th></tr></thead>
+              <tbody>${d.inquiries.map((q) => `<tr><td>${esc(when(q.time))}</td><td>${esc(q.about || "General")}</td><td>${esc(q.name)}${q.role ? ", " + esc(q.role) : ""}${q.company ? "<br>" + esc(q.company) : ""}<br><a href="mailto:${esc(q.email)}">${esc(q.email)}</a>${q.phone ? "<br>" + esc(q.phone) : ""}</td><td>${esc(q.message)}</td></tr>`).join("")}</tbody>
+            </table>` : `<p class="empty">No messages yet.</p>`}</div></section>` : ""}
 
           <section class="card card--wide"><h2>Latest activity</h2><p>The last 40 things visitors did.</p>
             <div class="scroller">${d.recent.length ? `<table>

@@ -47,6 +47,12 @@ Why this concept:
 ### Rooftop: Mailing list
 - The sign-up confirmation is the ox tucking your note into its pocket, as a short CSS animation. It's the one playful "share it" moment, in the spirit of brat's fan tool.
 
+### Floor 4: Founding Fans (`fans.html`)
+- The building's sign-in register. A bone **pass** with a punched hole (what Founding Fans get, spots left, the sign-up) beside a **ledger page** with a red margin rule: one numbered line per fan, names in pen. The first 1,000 signups are numbered for life by the Google Sheet. Linked from the home page ("The first 1,000."), the sign-up dialog and pop-up, and the footer directory.
+
+### Floor 5: Industry (`contact.html`)
+- The office upstairs. The form is a **"While you were out" phone-message slip** printed in marker red, with ruled lines to write on and the topic as tick boxes. Beside it, an "At a glance" fact sheet filled from `content/config.js`. Only in the footer directory, not the header, so fans aren't steered there.
+
 ### Basement: 404 page
 - "Stuck between floors." Elevator doors are slightly open, with a button back to the lobby.
 
