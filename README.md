@@ -38,6 +38,8 @@ Every email and every visit, click and song play goes into a Google Sheet you ow
 
 Until the Sheet is connected, the Join form opens an email to your music address instead.
 
+**Encore** (the artist-manager app) reads the same numbers and the full member list on its **Fans** page, using this same admin key. Nothing extra to set up here beyond keeping `backend/Code.gs` current.
+
 ## The fan wall
 
 The "Made by you." section on the home page is two rows of fan photos, fan art and comments that drift slowly across the screen (they pause when you hover). To add a piece, ask the fan first, upload the picture to `images/fans/` on GitHub, then add a line to `content/fanwall.js`; the examples at the top of that file show each kind. Until there are 8 pieces, empty frames ("your selfie with Xander", "your drawing"...) fill the gaps and invite fans to send theirs. The **Send yours** link opens an email to your music address.

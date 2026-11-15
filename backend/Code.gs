@@ -150,10 +150,12 @@ function doGet(e) {
   const key = PropertiesService.getScriptProperties().getProperty("ADMIN_KEY");
   if (!key || p.key !== key) return json({ ok: false, error: "key" });
   const days = Math.min(365, Math.max(1, Number(p.days) || 30));
-  return json(stats(days));
+  return json(stats(days, p.members === "1"));
 }
 
-function stats(days) {
+/* withMembers: also return the full mailing list (every subscriber, not just the latest 100).
+   Encore, the artist-manager app, asks for this with the same admin key to show all members. */
+function stats(days, withMembers) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const since = new Date(Date.now() - days * 864e5);
   const day = (d) => Utilities.formatDate(d, TZ, "yyyy-MM-dd");
@@ -220,6 +222,7 @@ function stats(days) {
     journey,
     popup: { shown: of("popup_shown").length, joined: subsIn.filter((r) => r[5] === "popup").length, dismissed: of("popup_dismiss").length },
     scroll: count(of("scroll_depth"), (r) => r[4] + " \u00b7 " + r[7] + "%"),
+    members: withMembers ? subs.slice().reverse().map((r) => ({ time: r[0].toISOString(), email: r[1], source: r[2], page: r[3], how: r[5], fan: r[6], founding: r[7] === "Yes", name: r[8] })) : undefined,
     subscribers: subs.slice(-100).reverse().map((r) => ({ time: r[0].toISOString(), email: r[1], source: r[2], page: r[3], how: r[5], fan: r[6], founding: r[7] === "Yes", name: r[8] })),
     inquiries: inq.slice(-50).reverse().map((r) => ({ time: r[0].toISOString(), name: r[1], company: r[2], role: r[3], email: r[4], phone: r[5], about: r[6], message: r[7] })),
     recent: ev.slice(-40).reverse().map((r) => ({ time: r[0].toISOString(), event: r[3], page: r[4], source: r[5], detail: r[7], place: place(r[9]) }))
