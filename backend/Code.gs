@@ -222,6 +222,14 @@ function stats(days, withMembers) {
     journey,
     popup: { shown: of("popup_shown").length, joined: subsIn.filter((r) => r[5] === "popup").length, dismissed: of("popup_dismiss").length },
     scroll: count(of("scroll_depth"), (r) => r[4] + " \u00b7 " + r[7] + "%"),
+    // smart links made in Encore (go.html): clicks per bio link (source) and campaign
+    smartlinks: (() => { const m = {}; of("smartlink_click").forEach((r) => { const k = (r[5] || "direct") + "\u0001" + String(r[7]).split(" ")[0]; m[k] = (m[k] || 0) + 1; });
+      return Object.keys(m).map((k) => ({ source: k.split("\u0001")[0], campaign: k.split("\u0001")[1], value: m[k] })).sort((a, b) => b.value - a.value); })(),
+    // per source per day, so Encore can credit visits and signups to the posts that drove them
+    bySourceDay: (() => { const m = {};
+      const add = (d, src, f) => { const k = day(d) + "\u0001" + (src || "direct"); m[k] = m[k] || { date: day(d), source: src || "direct", visits: 0, signups: 0, clicks: 0 }; m[k][f]++; };
+      visits.forEach((r) => add(r[0], r[5], "visits")); subsIn.forEach((r) => add(r[0], r[2], "signups")); of("smartlink_click").forEach((r) => add(r[0], r[5], "clicks"));
+      return Object.keys(m).map((k) => m[k]); })(),
     members: withMembers ? subs.slice().reverse().map((r) => ({ time: r[0].toISOString(), email: r[1], source: r[2], page: r[3], how: r[5], fan: r[6], founding: r[7] === "Yes", name: r[8] })) : undefined,
     subscribers: subs.slice(-100).reverse().map((r) => ({ time: r[0].toISOString(), email: r[1], source: r[2], page: r[3], how: r[5], fan: r[6], founding: r[7] === "Yes", name: r[8] })),
     inquiries: inq.slice(-50).reverse().map((r) => ({ time: r[0].toISOString(), name: r[1], company: r[2], role: r[3], email: r[4], phone: r[5], about: r[6], message: r[7] })),
